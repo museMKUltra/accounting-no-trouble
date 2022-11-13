@@ -7,9 +7,13 @@ module.exports = {
 	},
 	extends: ['eslint:recommended', 'plugin:react/recommended'],
 	overrides: [],
+	parser: '@babel/eslint-parser',
 	parserOptions: {
 		ecmaVersion: 'latest',
 		sourceType: 'module',
+		babelOptions: {
+			presets: ['@babel/preset-react'],
+		},
 	},
 	plugins: ['react'],
 	rules: {
