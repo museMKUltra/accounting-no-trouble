@@ -4,10 +4,18 @@ import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom'
 import Home from './Home.js'
 import About from './About.js'
 import Users from './Users.js'
+import { Service } from './memento'
 
 function App() {
+	const service = new Service(3)
+
+	service.update(5)
+	service.update(7)
+
 	return (
 		<div className="App">
+			<div>{service.estimatedDateCountRecords().join(', ')}</div>
+			<div>{service.estimatedDateCount()}</div>
 			<Router>
 				<nav>
 					<ul>
@@ -25,6 +33,7 @@ function App() {
 				<Routes>
 					<Route path="/about" element={<About />} />
 					<Route path="/users" element={<Users />} />
+					<Route path="/accounting-no-trouble" element={<Users />} />
 					<Route path="/" element={<Home />} />
 				</Routes>
 			</Router>
