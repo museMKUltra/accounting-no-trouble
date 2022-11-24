@@ -19,8 +19,10 @@ function App() {
 	}
 
 	const [projectGid, setProjectGid] = useState(null)
-	const updateProjectGid = gid => {
-		setProjectGid(gid)
+	const [customFieldGids, setCustomFieldGids] = useState([])
+	const updateProjectGid = (projectGid, customFieldGids) => {
+		setProjectGid(projectGid)
+		setCustomFieldGids(customFieldGids)
 		navigate('/section')
 	}
 
@@ -73,7 +75,12 @@ function App() {
 						/>
 					}
 				/>
-				<Route path="/task" element={<Task taskGids={taskGids} />} />
+				<Route
+					path="/task"
+					element={
+						<Task taskGids={taskGids} customFieldGids={customFieldGids} />
+					}
+				/>
 				<Route path="/" element={<Home />} />
 				{projectGid}
 			</Routes>

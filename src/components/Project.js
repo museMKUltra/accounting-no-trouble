@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import RadioList from './RadioList'
 import Button from './Button'
 import { useProjects } from '../hooks/asana/useProjects.js'
+import ProjectCustomField from './ProjectCustomField.js'
 
 function Project({ workspaceGid, updateProjectGid }) {
 	const { isFetching, projects } = useProjects({ workspaceGid })
@@ -9,13 +10,26 @@ function Project({ workspaceGid, updateProjectGid }) {
 		Object.assign(project, { key: project.gid })
 	)
 
+	const [checkedCheckboxes, setCheckedCheckboxes] = useState([])
+	const checkCheckbox = checkedCheckbox => {
+		setCheckedCheckboxes([...checkedCheckboxes, checkedCheckbox])
+	}
+	const uncheckCheckbox = uncheckedCheckbox => {
+		setCheckedCheckboxes(
+			checkedCheckboxes.filter(
+				checkedCheckbox => checkedCheckbox !== uncheckedCheckbox
+			)
+		)
+	}
+
 	const [currentRadio, setCurrentRadio] = useState(null)
 	const updateCurrentRadio = radioKey => {
 		setCurrentRadio(radioKey)
+		setCheckedCheckboxes([])
 	}
 
 	const handleClick = () => {
-		updateProjectGid(currentRadio)
+		updateProjectGid(currentRadio, checkedCheckboxes)
 	}
 
 	return (
@@ -29,7 +43,14 @@ function Project({ workspaceGid, updateProjectGid }) {
 					currentRadio={currentRadio}
 					radioList={radioList}
 					updateCurrentRadio={updateCurrentRadio}
-				/>
+				>
+					<ProjectCustomField
+						projectGid={currentRadio}
+						checkedCheckboxes={checkedCheckboxes}
+						checkCheckbox={checkCheckbox}
+						uncheckCheckbox={uncheckCheckbox}
+					/>
+				</RadioList>
 			)}
 			<Button isDisabled={!currentRadio} handleClick={handleClick}>
 				confirm

@@ -1,21 +1,32 @@
 import React from 'react'
 
-function RadioList({ inputName, currentRadio, radioList, updateCurrentRadio }) {
+function RadioList({
+	inputName,
+	currentRadio,
+	radioList,
+	updateCurrentRadio,
+	children,
+}) {
 	return (
 		<ul>
-			{radioList.map(radio => (
-				<li key={radio.key} style={{ listStyleType: 'none' }}>
-					<input
-						name={inputName}
-						type="radio"
-						value={radio.key}
-						id={radio.key}
-						checked={currentRadio === radio.key}
-						onChange={() => updateCurrentRadio(radio.key)}
-					/>
-					<label htmlFor={radio.key}>{radio.name}</label>
-				</li>
-			))}
+			{radioList.map(radio => {
+				const isChecked = currentRadio === radio.key
+
+				return (
+					<li key={radio.key} style={{ listStyleType: 'none' }}>
+						<input
+							name={inputName}
+							type="radio"
+							value={radio.key}
+							id={radio.key}
+							checked={isChecked}
+							onChange={() => updateCurrentRadio(radio.key)}
+						/>
+						<label htmlFor={radio.key}>{radio.name}</label>
+						{isChecked && children}
+					</li>
+				)
+			})}
 		</ul>
 	)
 }
