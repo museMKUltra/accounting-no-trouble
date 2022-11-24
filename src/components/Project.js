@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import RadioList from './RadioList'
 import Button from './Button'
 import { useProjects } from '../hooks/asana/useProjects.js'
 
 function Project({ workspaceGid, updateProjectGid }) {
 	const { isFetching, projects } = useProjects({ workspaceGid })
-
-	const [radioList, setRadioList] = useState([])
-	useEffect(() => {
-		setRadioList(
-			projects.map(project => Object.assign(project, { key: project.gid }))
-		)
-	}, [projects])
+	const radioList = projects.map(project =>
+		Object.assign(project, { key: project.gid })
+	)
 
 	const [currentRadio, setCurrentRadio] = useState(null)
 	const updateCurrentRadio = radioKey => {
