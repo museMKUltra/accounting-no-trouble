@@ -5,8 +5,8 @@ import { useUsersMe } from '../hooks/asana/useUsersMe.js'
 
 function Workspace({ updateWorkspaceGid }) {
 	const { isFetching, workspaces, meGid } = useUsersMe()
-	const [radioList, setRadioList] = useState([])
 
+	const [radioList, setRadioList] = useState([])
 	useEffect(() => {
 		setRadioList(
 			workspaces.map(workspace =>
@@ -15,7 +15,7 @@ function Workspace({ updateWorkspaceGid }) {
 		)
 	}, [workspaces])
 
-	let [currentRadio, setCurrentRadio] = useState(null)
+	const [currentRadio, setCurrentRadio] = useState(null)
 	const updateCurrentRadio = radioKey => {
 		setCurrentRadio(radioKey)
 	}

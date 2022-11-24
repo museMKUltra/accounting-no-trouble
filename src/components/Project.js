@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { fetchProjects } from '../hooks/asana.js'
 import RadioList from './RadioList'
 import Button from './Button'
+import { useProjects } from '../hooks/asana/useProjects.js'
 
 function Project({ workspaceGid, updateProjectGid }) {
-	let [radioList, setRadioList] = useState([])
-	async function handleProjects(workspaceGid) {
-		const { projects } = await fetchProjects(workspaceGid)
+	const { isFetching, projects } = useProjects({ workspaceGid })
+
+	const [radioList, setRadioList] = useState([])
+	useEffect(() => {
 		setRadioList(
 			projects.map(project => Object.assign(project, { key: project.gid }))
 		)
-	}
-	useEffect(() => {
-		if (!workspaceGid) {
-			return
-		}
-		handleProjects(workspaceGid)
-	}, [workspaceGid])
+	}, [projects])
 
-	let [currentRadio, setCurrentRadio] = useState(null)
+	const [currentRadio, setCurrentRadio] = useState(null)
 	const updateCurrentRadio = radioKey => {
 		setCurrentRadio(radioKey)
 	}
@@ -30,12 +25,16 @@ function Project({ workspaceGid, updateProjectGid }) {
 	return (
 		<>
 			<h1>Projects</h1>
-			<RadioList
-				inputName={'projects'}
-				currentRadio={currentRadio}
-				radioList={radioList}
-				updateCurrentRadio={updateCurrentRadio}
-			/>
+			{isFetching ? (
+				<p>fetching...</p>
+			) : (
+				<RadioList
+					inputName={'projects'}
+					currentRadio={currentRadio}
+					radioList={radioList}
+					updateCurrentRadio={updateCurrentRadio}
+				/>
+			)}
 			<Button isDisabled={!currentRadio} handleClick={handleClick}>
 				confirm
 			</Button>

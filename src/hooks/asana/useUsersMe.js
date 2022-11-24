@@ -9,22 +9,12 @@ export function useUsersMe() {
 	async function fetchUsersMe() {
 		try {
 			setIsFetching(true)
-			const response = await client.users.me()
-			const {
-				gid = '',
-				workspaces = [],
-				status = 200,
-				message = 'no error message',
-			} = response
-
-			if (status !== 200) {
-				throw new Error(message)
-			}
+			const { gid = '', workspaces = [] } = await client.users.me()
 
 			setMeGid(gid)
 			setWorkspaces(workspaces)
 		} catch (e) {
-			console.error(e.message)
+			console.error(e)
 		} finally {
 			setIsFetching(false)
 		}
