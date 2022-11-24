@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import CheckboxList from './CheckboxList'
-import { fetchTasks } from '../hooks/asana.js'
+import { useTasks } from '../hooks/asana/useTasks.js'
 
 function SectionTask({
 	workspaceGid,
@@ -10,27 +10,26 @@ function SectionTask({
 	checkCheckbox,
 	uncheckCheckbox,
 }) {
-	let [taskList, setTaskList] = useState([])
-
-	async function handleTasks(workspaceGid, assigneeGid, sectionGid) {
-		const { tasks } = await fetchTasks(workspaceGid, assigneeGid, sectionGid)
-		console.log('tasks', tasks)
-		setTaskList(tasks.map(task => Object.assign(task, { key: task.gid })))
-	}
-	useEffect(() => {
-		if (!workspaceGid || !assigneeGid || !sectionGid) {
-			return
-		}
-		handleTasks(workspaceGid, assigneeGid, sectionGid)
-	}, [workspaceGid, assigneeGid, sectionGid])
+	const { isFetching, tasks } = useTasks({
+		workspaceGid,
+		assigneeGid,
+		sectionGid,
+	})
+	const taskList = tasks.map(task => Object.assign(task, { key: task.gid }))
 
 	return (
-		<CheckboxList
-			checkboxList={taskList}
-			checkedCheckboxes={checkedCheckboxes}
-			checkCheckbox={checkCheckbox}
-			uncheckCheckbox={uncheckCheckbox}
-		/>
+		<>
+			{isFetching ? (
+				<p>fetching...</p>
+			) : (
+				<CheckboxList
+					checkboxList={taskList}
+					checkedCheckboxes={checkedCheckboxes}
+					checkCheckbox={checkCheckbox}
+					uncheckCheckbox={uncheckCheckbox}
+				/>
+			)}
+		</>
 	)
 }
 

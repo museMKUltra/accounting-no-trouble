@@ -1,7 +1,7 @@
 import { client } from '../asana.js'
 import { useEffect, useState } from 'react'
 
-export function useSections({ projectGid: project }) {
+export function useSections({ projectGid }) {
 	const [sections, setSections] = useState([])
 	const [isFetching, setIsFetching] = useState(false)
 
@@ -20,10 +20,10 @@ export function useSections({ projectGid: project }) {
 	}
 
 	useEffect(() => {
-		if (!project) return
+		if (!projectGid) return
 
-		fetchSections(project)
-	}, [project])
+		fetchSections(projectGid)
+	}, [projectGid])
 
 	return { isFetching, sections }
 }
