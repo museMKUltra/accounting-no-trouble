@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Button from './Button'
-import { fetchSections } from '../asana'
+import { fetchSections } from '../hooks/asana.js'
 import SectionTask from './SectionTask'
 
 function Section({ workspaceGid, assigneeGid, projectGid, updateTaskGids }) {

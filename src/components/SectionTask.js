@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import CheckboxList from './CheckboxList'
-import { fetchTasks } from '../asana'
+import { fetchTasks } from '../hooks/asana.js'
 
 function SectionTask({
 	workspaceGid,

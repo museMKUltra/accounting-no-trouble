@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { fetchProjects } from '../asana'
+import { fetchProjects } from '../hooks/asana.js'
 import RadioList from './RadioList'
 import Button from './Button'
 

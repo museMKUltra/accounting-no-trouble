@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import RadioList from './RadioList'
-import { fetchMe } from '../asana'
 import Button from './Button'
+import { useUsersMe } from '../hooks/asana/useUsersMe.js'
 
 function Workspace({ updateWorkspaceGid }) {
-	let [radioList, setRadioList] = useState([])
-	let [meGid, setMeGid] = useState(null)
-	async function handleWorkspaces() {
-		const { gid, workspaces } = await fetchMe()
-		setMeGid(gid)
+	const { isFetching, workspaces, meGid } = useUsersMe()
+	const [radioList, setRadioList] = useState([])
+
+	useEffect(() => {
 		setRadioList(
 			workspaces.map(workspace =>
 				Object.assign(workspace, { key: workspace.gid })
 			)
 		)
-	}
-	useEffect(() => {
-		handleWorkspaces()
-	}, [])
+	}, [workspaces])
 
 	let [currentRadio, setCurrentRadio] = useState(null)
 	const updateCurrentRadio = radioKey => {
@@ -31,12 +27,16 @@ function Workspace({ updateWorkspaceGid }) {
 	return (
 		<>
 			<h1>Workspaces</h1>
-			<RadioList
-				inputName={'workspaces'}
-				currentRadio={currentRadio}
-				radioList={radioList}
-				updateCurrentRadio={updateCurrentRadio}
-			/>
+			{isFetching ? (
+				<p>fetching...</p>
+			) : (
+				<RadioList
+					inputName={'workspaces'}
+					currentRadio={currentRadio}
+					radioList={radioList}
+					updateCurrentRadio={updateCurrentRadio}
+				/>
+			)}
 			<Button isDisabled={!currentRadio} handleClick={handleClick}>
 				confirm
 			</Button>
