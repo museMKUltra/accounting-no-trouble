@@ -1,45 +1,77 @@
 import './App.css'
-import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom'
-import Home from './Home.js'
-import About from './About.js'
-import Users from './Users.js'
-
-import { fetch } from './asana'
-import { Service } from './memento'
+import { Link, Route, Routes, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import Workspace from './components/Workspace'
+import Project from './components/Project'
+import Section from './components/Section'
+import Home from './Home'
 
 function App() {
-	fetch()
+	const navigate = useNavigate()
 
-	const service = new Service(3)
+	const [assigneeGid, setAssigneeGid] = useState(null)
+	const [workspaceGid, setWorkspaceGid] = useState(null)
+	const updateWorkspaceGid = (assigneeGid, workspaceGid) => {
+		setAssigneeGid(assigneeGid)
+		setWorkspaceGid(workspaceGid)
+		navigate('/project')
+	}
 
-	service.update(5)
-	service.update(7)
+	const [projectGid, setProjectGid] = useState(null)
+	const updateProjectGid = gid => {
+		setProjectGid(gid)
+		navigate('/section')
+	}
+
+	const [taskGids, setTaskGids] = useState([])
+	const updateTaskGids = gids => {
+		setTaskGids(gids)
+	}
 
 	return (
 		<div className="App">
-			<div>{service.estimatedDateCountRecords().join(', ')}</div>
-			<div>{service.estimatedDateCount()}</div>
-			<Router>
-				<nav>
-					<ul>
-						<li>
-							<Link to="/">Home</Link>
-						</li>
-						<li>
-							<Link to="/about">About</Link>
-						</li>
-						<li>
-							<Link to="/users">Users</Link>
-						</li>
-					</ul>
-				</nav>
-				<Routes>
-					<Route path="/about" element={<About />} />
-					<Route path="/users" element={<Users />} />
-					<Route path="/accounting-no-trouble" element={<Users />} />
-					<Route path="/" element={<Home />} />
-				</Routes>
-			</Router>
+			{taskGids.join(', ')}
+			<nav>
+				<ul style={{ display: 'flex' }}>
+					<li style={{ listStyleType: 'none', paddingRight: '8px' }}>
+						<Link to="/workspace">Workspace</Link>
+					</li>
+					<li style={{ listStyleType: 'none', paddingRight: '8px' }}>
+						<Link to="/project">Project</Link>
+					</li>
+					<li style={{ listStyleType: 'none', paddingRight: '8px' }}>
+						<Link to="/section">Section</Link>
+					</li>
+				</ul>
+			</nav>
+			<Routes>
+				<Route
+					path="/workspace"
+					element={<Workspace updateWorkspaceGid={updateWorkspaceGid} />}
+				/>
+				<Route
+					path="/project"
+					element={
+						<Project
+							workspaceGid={workspaceGid}
+							updateProjectGid={updateProjectGid}
+						/>
+					}
+				/>
+				<Route
+					path="/section"
+					element={
+						<Section
+							workspaceGid={workspaceGid}
+							assigneeGid={assigneeGid}
+							projectGid={projectGid}
+							updateTaskGids={updateTaskGids}
+						/>
+					}
+				/>
+				<Route path="/" element={<Home />} />
+				{projectGid}
+			</Routes>
 		</div>
 	)
 }

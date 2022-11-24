@@ -1,52 +1,68 @@
 import asana from 'asana'
 
-const WORKSPACE_NAME = 'kkday.com'
-const PROJECT_NAME = 'Web'
-const SECTION_NAME = 'In Development'
-const TASK_NAME = 'Follow up on "[mweb][Calendar] New Component"'
+// const WORKSPACE_NAME = 'kkday.com'
+// const PROJECT_NAME = 'Web'
+// const SECTION_NAME = 'In Development'
+const SECTION_NAMES = ['TODO', 'In Development', 'In Code Review']
+const TASK_NAME = 'web-contributing-guidelines - npm link'
 const CUSTOM_FIELD_NAME = '估時(天)'
 
 const client = asana.Client.create().useAccessToken(
 	process.env.REACT_APP_ASANA_PAT
 )
 
-export const fetch = async () => {
-	// get assignee gid & workspace gid
-	const { gid: assignee = '', workspaces = [] } = await client.users.me()
-	const { gid: workspace = '' } = workspaces.find(
-		workspace => workspace.name === WORKSPACE_NAME
-	)
+export async function fetchMe() {
+	const { gid = '', workspaces = [] } = await client.users.me()
 
-	// get project gid
+	return { gid, workspaces }
+}
+
+export async function fetchProjects(workspaceGid) {
 	const { data: projects = [] } = await client.projects.getProjects({
-		workspace,
+		workspace: workspaceGid,
 	})
-	const { gid: project = '' } = projects.find(
-		project => project.name === PROJECT_NAME
-	)
 
-	// get section gid
+	return { projects }
+}
+
+export async function fetchSections(projectGid) {
 	const { data: sections = [] } = await client.sections.getSectionsForProject(
-		project,
+		projectGid,
 		{}
 	)
-	const { gid: section = '' } = sections.find(
-		section => section.name === SECTION_NAME
-	)
 
-	// search tasks by assignee gid & section gid
-	const { data: searchTasks = [] } = await client.tasks.searchTasksForWorkspace(
-		workspace,
+	return { sections }
+}
+
+export async function fetchTasks(workspaceGid, assigneeGid, sectionGid) {
+	const { data: tasks = [] } = await client.tasks.searchTasksForWorkspace(
+		workspaceGid,
 		{
-			'assignee.any': assignee,
-			'sections.any': section,
+			'assignee.any': assigneeGid,
+			'sections.any': sectionGid,
 		}
 	)
+
+	return { tasks }
+}
+
+export const fetch = async () => {
+	const { assigneeGid, workspaceGid } = await fetchMe()
+	const projectGid = await fetchProjects(workspaceGid)
+
+	const { sections, section } = await fetchSections(projectGid)
+
+	const searchTasks = await fetchTasks(workspaceGid, assigneeGid, section)
+
+	const filteredSections = sections.filter(section =>
+		SECTION_NAMES.includes(section.name)
+	)
+	console.log('sections', filteredSections)
 
 	// get custom field
 	const { data: customFieldSettings = [] } =
 		await client.customFieldSettings.getCustomFieldSettingsForProject(
-			project,
+			projectGid,
 			{}
 		)
 	const { gid: customField = '' } = customFieldSettings.find(
