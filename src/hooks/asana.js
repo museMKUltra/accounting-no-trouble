@@ -7,7 +7,7 @@ const SECTION_NAMES = ['TODO', 'In Development', 'In Code Review']
 const TASK_NAME = 'web-contributing-guidelines - npm link'
 const CUSTOM_FIELD_NAME = '估時(天)'
 
-const client = asana.Client.create().useAccessToken(
+export const client = asana.Client.create().useAccessToken(
 	process.env.REACT_APP_ASANA_PAT
 )
 

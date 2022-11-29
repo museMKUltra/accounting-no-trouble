@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Workspace from './components/Workspace'
 import Project from './components/Project'
 import Section from './components/Section'
+import Task from './components/Task.js'
 import Home from './Home'
 
 function App() {
@@ -18,19 +19,21 @@ function App() {
 	}
 
 	const [projectGid, setProjectGid] = useState(null)
-	const updateProjectGid = gid => {
-		setProjectGid(gid)
+	const [customFieldGids, setCustomFieldGids] = useState([])
+	const updateProjectGid = (projectGid, customFieldGids) => {
+		setProjectGid(projectGid)
+		setCustomFieldGids(customFieldGids)
 		navigate('/section')
 	}
 
 	const [taskGids, setTaskGids] = useState([])
 	const updateTaskGids = gids => {
 		setTaskGids(gids)
+		navigate('/task')
 	}
 
 	return (
 		<div className="App">
-			{taskGids.join(', ')}
 			<nav>
 				<ul style={{ display: 'flex' }}>
 					<li style={{ listStyleType: 'none', paddingRight: '8px' }}>
@@ -41,6 +44,9 @@ function App() {
 					</li>
 					<li style={{ listStyleType: 'none', paddingRight: '8px' }}>
 						<Link to="/section">Section</Link>
+					</li>
+					<li style={{ listStyleType: 'none', paddingRight: '8px' }}>
+						<Link to="/task">Task</Link>
 					</li>
 				</ul>
 			</nav>
@@ -67,6 +73,12 @@ function App() {
 							projectGid={projectGid}
 							updateTaskGids={updateTaskGids}
 						/>
+					}
+				/>
+				<Route
+					path="/task"
+					element={
+						<Task taskGids={taskGids} customFieldGids={customFieldGids} />
 					}
 				/>
 				<Route path="/" element={<Home />} />

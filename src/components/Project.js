@@ -1,41 +1,57 @@
-import React, { useEffect, useState } from 'react'
-import { fetchProjects } from '../asana'
+import React, { useState } from 'react'
 import RadioList from './RadioList'
 import Button from './Button'
+import { useProjects } from '../hooks/asana/useProjects.js'
+import ProjectCustomField from './ProjectCustomField.js'
 
 function Project({ workspaceGid, updateProjectGid }) {
-	let [radioList, setRadioList] = useState([])
-	async function handleProjects(workspaceGid) {
-		const { projects } = await fetchProjects(workspaceGid)
-		setRadioList(
-			projects.map(project => Object.assign(project, { key: project.gid }))
+	const { isFetching, projects } = useProjects({ workspaceGid })
+	const radioList = projects.map(project =>
+		Object.assign(project, { key: project.gid })
+	)
+
+	const [checkedCheckboxes, setCheckedCheckboxes] = useState([])
+	const checkCheckbox = checkedCheckbox => {
+		setCheckedCheckboxes([...checkedCheckboxes, checkedCheckbox])
+	}
+	const uncheckCheckbox = uncheckedCheckbox => {
+		setCheckedCheckboxes(
+			checkedCheckboxes.filter(
+				checkedCheckbox => checkedCheckbox !== uncheckedCheckbox
+			)
 		)
 	}
-	useEffect(() => {
-		if (!workspaceGid) {
-			return
-		}
-		handleProjects(workspaceGid)
-	}, [workspaceGid])
 
-	let [currentRadio, setCurrentRadio] = useState(null)
+	const [currentRadio, setCurrentRadio] = useState(null)
 	const updateCurrentRadio = radioKey => {
 		setCurrentRadio(radioKey)
+		setCheckedCheckboxes([])
 	}
 
 	const handleClick = () => {
-		updateProjectGid(currentRadio)
+		updateProjectGid(currentRadio, checkedCheckboxes)
 	}
 
 	return (
 		<>
 			<h1>Projects</h1>
-			<RadioList
-				inputName={'projects'}
-				currentRadio={currentRadio}
-				radioList={radioList}
-				updateCurrentRadio={updateCurrentRadio}
-			/>
+			{isFetching ? (
+				<p>fetching...</p>
+			) : (
+				<RadioList
+					inputName={'projects'}
+					currentRadio={currentRadio}
+					radioList={radioList}
+					updateCurrentRadio={updateCurrentRadio}
+				>
+					<ProjectCustomField
+						projectGid={currentRadio}
+						checkedCheckboxes={checkedCheckboxes}
+						checkCheckbox={checkCheckbox}
+						uncheckCheckbox={uncheckCheckbox}
+					/>
+				</RadioList>
+			)}
 			<Button isDisabled={!currentRadio} handleClick={handleClick}>
 				confirm
 			</Button>
