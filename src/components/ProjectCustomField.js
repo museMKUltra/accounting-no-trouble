@@ -12,7 +12,6 @@ function ProjectCustomField({
 	const checkboxList = customFields.map(customField =>
 		Object.assign(customField, { key: customField.gid })
 	)
-	console.log('checkboxList', checkboxList)
 
 	return (
 		<>

@@ -1,4 +1,4 @@
-import { client } from '../asana.js'
+import { client } from './asana.js'
 import { useEffect, useState } from 'react'
 
 export function useCustomFields({ projectGid }) {
