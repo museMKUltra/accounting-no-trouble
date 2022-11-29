@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Button from './Button'
 import SectionTask from './SectionTask'
 import { useSections } from '../hooks/asana/useSections.js'
+import { useCheckbox } from '../hooks/useCheckbox.js'
 
 function Section({ workspaceGid, assigneeGid, projectGid, updateTaskGids }) {
 	const { isFetching, sections } = useSections({ projectGid })
@@ -9,21 +10,9 @@ function Section({ workspaceGid, assigneeGid, projectGid, updateTaskGids }) {
 		Object.assign(section, { key: section.gid })
 	)
 
-	const [checkedCheckboxes, setCheckedCheckboxes] = useState([])
-	const checkCheckbox = checkedCheckbox => {
-		setCheckedCheckboxes([...checkedCheckboxes, checkedCheckbox])
-	}
-	const uncheckCheckbox = uncheckedCheckbox => {
-		setCheckedCheckboxes(
-			checkedCheckboxes.filter(
-				checkedCheckbox => checkedCheckbox !== uncheckedCheckbox
-			)
-		)
-	}
+	const { checkedCheckboxes, checkCheckbox, uncheckCheckbox } = useCheckbox()
 
-	const handleClick = () => {
-		updateTaskGids(checkedCheckboxes)
-	}
+	const handleClick = () => updateTaskGids(checkedCheckboxes)
 
 	return (
 		<>

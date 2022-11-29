@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import RadioList from './RadioList'
 import Button from './Button'
 import { useUsersMe } from '../hooks/asana/useUsersMe.js'
+import { useRadio } from '../hooks/useRadio.js'
 
 function Workspace({ updateWorkspaceGid }) {
 	const { isFetching, workspaces, meGid } = useUsersMe()
@@ -9,13 +10,9 @@ function Workspace({ updateWorkspaceGid }) {
 		Object.assign(workspace, { key: workspace.gid })
 	)
 
-	const [currentRadio, setCurrentRadio] = useState(null)
-	const updateCurrentRadio = radioKey => {
-		setCurrentRadio(radioKey)
-	}
-
+	const { checkedRadio, updateRadio } = useRadio()
 	const handleClick = () => {
-		updateWorkspaceGid(meGid, currentRadio)
+		updateWorkspaceGid(meGid, checkedRadio)
 	}
 
 	return (
@@ -26,12 +23,12 @@ function Workspace({ updateWorkspaceGid }) {
 			) : (
 				<RadioList
 					inputName={'workspaces'}
-					currentRadio={currentRadio}
+					currentRadio={checkedRadio}
 					radioList={radioList}
-					updateCurrentRadio={updateCurrentRadio}
+					updateCurrentRadio={updateRadio}
 				/>
 			)}
-			<Button isDisabled={!currentRadio} handleClick={handleClick}>
+			<Button isDisabled={!checkedRadio} handleClick={handleClick}>
 				confirm
 			</Button>
 		</>
