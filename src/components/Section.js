@@ -1,7 +1,20 @@
-import React, { useState } from 'react'
+import React, { useReducer } from 'react'
 import Button from './Button'
 import SectionTask from './SectionTask'
 import { useSections } from '../hooks/asana/useSections.js'
+
+const reducer = (state, action) => {
+	switch (action.type) {
+		case 'check': {
+			return state.concat([action.checkbox])
+		}
+		case 'uncheck': {
+			return state.filter(checkbox => checkbox !== action.checkbox)
+		}
+		default:
+			return state
+	}
+}
 
 function Section({ workspaceGid, assigneeGid, projectGid, updateTaskGids }) {
 	const { isFetching, sections } = useSections({ projectGid })
@@ -9,20 +22,16 @@ function Section({ workspaceGid, assigneeGid, projectGid, updateTaskGids }) {
 		Object.assign(section, { key: section.gid })
 	)
 
-	const [checkedCheckboxes, setCheckedCheckboxes] = useState([])
+	const [state, dispatch] = useReducer(reducer, [], () => [])
 	const checkCheckbox = checkedCheckbox => {
-		setCheckedCheckboxes([...checkedCheckboxes, checkedCheckbox])
+		dispatch({ type: 'check', checkbox: checkedCheckbox })
 	}
 	const uncheckCheckbox = uncheckedCheckbox => {
-		setCheckedCheckboxes(
-			checkedCheckboxes.filter(
-				checkedCheckbox => checkedCheckbox !== uncheckedCheckbox
-			)
-		)
+		dispatch({ type: 'uncheck', checkbox: uncheckedCheckbox })
 	}
 
 	const handleClick = () => {
-		updateTaskGids(checkedCheckboxes)
+		updateTaskGids(state)
 	}
 
 	return (
@@ -38,7 +47,7 @@ function Section({ workspaceGid, assigneeGid, projectGid, updateTaskGids }) {
 							workspaceGid={workspaceGid}
 							assigneeGid={assigneeGid}
 							sectionGid={section.gid}
-							checkedCheckboxes={checkedCheckboxes}
+							checkedCheckboxes={state}
 							checkCheckbox={checkCheckbox}
 							uncheckCheckbox={uncheckCheckbox}
 						/>
