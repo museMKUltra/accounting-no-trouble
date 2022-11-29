@@ -3,6 +3,7 @@ import RadioList from './RadioList'
 import Button from './Button'
 import { useProjects } from '../hooks/asana/useProjects.js'
 import ProjectCustomField from './ProjectCustomField.js'
+import { useCheckbox } from '../hooks/useCheckbox.js'
 
 function Project({ workspaceGid, updateProjectGid }) {
 	const { isFetching, projects } = useProjects({ workspaceGid })
@@ -10,22 +11,13 @@ function Project({ workspaceGid, updateProjectGid }) {
 		Object.assign(project, { key: project.gid })
 	)
 
-	const [checkedCheckboxes, setCheckedCheckboxes] = useState([])
-	const checkCheckbox = checkedCheckbox => {
-		setCheckedCheckboxes([...checkedCheckboxes, checkedCheckbox])
-	}
-	const uncheckCheckbox = uncheckedCheckbox => {
-		setCheckedCheckboxes(
-			checkedCheckboxes.filter(
-				checkedCheckbox => checkedCheckbox !== uncheckedCheckbox
-			)
-		)
-	}
+	const { checkedCheckboxes, checkCheckbox, uncheckCheckbox, cleanCheckbox } =
+		useCheckbox()
 
 	const [currentRadio, setCurrentRadio] = useState(null)
 	const updateCurrentRadio = radioKey => {
 		setCurrentRadio(radioKey)
-		setCheckedCheckboxes([])
+		cleanCheckbox()
 	}
 
 	const handleClick = () => {
