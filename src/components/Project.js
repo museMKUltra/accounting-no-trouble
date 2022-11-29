@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import RadioList from './RadioList'
 import Button from './Button'
 import { useProjects } from '../hooks/asana/useProjects.js'
 import ProjectCustomField from './ProjectCustomField.js'
 import { useCheckbox } from '../hooks/useCheckbox.js'
+import { useRadio } from '../hooks/useRadio.js'
 
 function Project({ workspaceGid, updateProjectGid }) {
 	const { isFetching, projects } = useProjects({ workspaceGid })
@@ -13,15 +14,14 @@ function Project({ workspaceGid, updateProjectGid }) {
 
 	const { checkedCheckboxes, checkCheckbox, uncheckCheckbox, cleanCheckbox } =
 		useCheckbox()
+	const { checkedRadio, updateRadio } = useRadio()
 
-	const [currentRadio, setCurrentRadio] = useState(null)
 	const updateCurrentRadio = radioKey => {
-		setCurrentRadio(radioKey)
+		updateRadio(radioKey)
 		cleanCheckbox()
 	}
-
 	const handleClick = () => {
-		updateProjectGid(currentRadio, checkedCheckboxes)
+		updateProjectGid(checkedRadio, checkedCheckboxes)
 	}
 
 	return (
@@ -32,19 +32,19 @@ function Project({ workspaceGid, updateProjectGid }) {
 			) : (
 				<RadioList
 					inputName={'projects'}
-					currentRadio={currentRadio}
+					currentRadio={checkedRadio}
 					radioList={radioList}
 					updateCurrentRadio={updateCurrentRadio}
 				>
 					<ProjectCustomField
-						projectGid={currentRadio}
+						projectGid={checkedRadio}
 						checkedCheckboxes={checkedCheckboxes}
 						checkCheckbox={checkCheckbox}
 						uncheckCheckbox={uncheckCheckbox}
 					/>
 				</RadioList>
 			)}
-			<Button isDisabled={!currentRadio} handleClick={handleClick}>
+			<Button isDisabled={!checkedRadio} handleClick={handleClick}>
 				confirm
 			</Button>
 		</>
