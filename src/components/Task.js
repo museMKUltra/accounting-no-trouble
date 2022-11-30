@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
+import { GidContext } from '../contexts/GidContext.js'
 
-function Task({ taskGids, customFieldGids }) {
+function Task() {
+	const { taskGids, customFieldGids } = useContext(GidContext)
+
 	const { isFetching, detailTasks } = useDetailTasks({ taskGids })
 	const taskList = detailTasks.map(task =>
 		Object.assign(

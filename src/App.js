@@ -6,19 +6,20 @@ import Project from './components/Project'
 import Section from './components/Section'
 import Task from './components/Task.js'
 import Home from './Home'
+import { GidContext } from './contexts/GidContext.js'
 
 function App() {
 	const navigate = useNavigate()
 
-	const [assigneeGid, setAssigneeGid] = useState(null)
-	const [workspaceGid, setWorkspaceGid] = useState(null)
+	const [assigneeGid, setAssigneeGid] = useState('')
+	const [workspaceGid, setWorkspaceGid] = useState('')
 	const updateWorkspaceGid = (assigneeGid, workspaceGid) => {
 		setAssigneeGid(assigneeGid)
 		setWorkspaceGid(workspaceGid)
 		navigate('/project')
 	}
 
-	const [projectGid, setProjectGid] = useState(null)
+	const [projectGid, setProjectGid] = useState('')
 	const [customFieldGids, setCustomFieldGids] = useState([])
 	const updateProjectGid = (projectGid, customFieldGids) => {
 		setProjectGid(projectGid)
@@ -50,40 +51,33 @@ function App() {
 					</li>
 				</ul>
 			</nav>
-			<Routes>
-				<Route
-					path="/workspace"
-					element={<Workspace updateWorkspaceGid={updateWorkspaceGid} />}
-				/>
-				<Route
-					path="/project"
-					element={
-						<Project
-							workspaceGid={workspaceGid}
-							updateProjectGid={updateProjectGid}
-						/>
-					}
-				/>
-				<Route
-					path="/section"
-					element={
-						<Section
-							workspaceGid={workspaceGid}
-							assigneeGid={assigneeGid}
-							projectGid={projectGid}
-							updateTaskGids={updateTaskGids}
-						/>
-					}
-				/>
-				<Route
-					path="/task"
-					element={
-						<Task taskGids={taskGids} customFieldGids={customFieldGids} />
-					}
-				/>
-				<Route path="/" element={<Home />} />
-				{projectGid}
-			</Routes>
+			<GidContext.Provider
+				value={{
+					assigneeGid,
+					workspaceGid,
+					projectGid,
+					customFieldGids,
+					taskGids,
+				}}
+			>
+				<Routes>
+					<Route
+						path="/workspace"
+						element={<Workspace updateWorkspaceGid={updateWorkspaceGid} />}
+					/>
+					<Route
+						path="/project"
+						element={<Project updateProjectGid={updateProjectGid} />}
+					/>
+					<Route
+						path="/section"
+						element={<Section updateTaskGids={updateTaskGids} />}
+					/>
+					<Route path="/task" element={<Task />} />
+					<Route path="/" element={<Home />} />
+					{projectGid}
+				</Routes>
+			</GidContext.Provider>
 		</div>
 	)
 }

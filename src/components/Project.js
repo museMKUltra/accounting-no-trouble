@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import RadioList from './RadioList'
 import Button from './Button'
 import { useProjects } from '../hooks/asana/useProjects.js'
 import ProjectCustomField from './ProjectCustomField.js'
 import { useCheckbox } from '../hooks/useCheckbox.js'
 import { useRadio } from '../hooks/useRadio.js'
+import { GidContext } from '../contexts/GidContext.js'
 
-function Project({ workspaceGid, updateProjectGid }) {
+function Project({ updateProjectGid }) {
+	const { workspaceGid } = useContext(GidContext)
+
 	const { isFetching, projects } = useProjects({ workspaceGid })
 	const radioList = projects.map(project =>
 		Object.assign(project, { key: project.gid })
