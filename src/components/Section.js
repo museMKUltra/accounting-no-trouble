@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Button from './Button'
 import SectionTask from './SectionTask'
 import { useSections } from '../hooks/asana/useSections.js'
 import { useCheckbox } from '../hooks/useCheckbox.js'
+import { GidContext } from '../contexts/GidContext.js'
 
-function Section({ workspaceGid, assigneeGid, projectGid, updateTaskGids }) {
+function Section({ updateTaskGids }) {
+	const { workspaceGid, assigneeGid, projectGid } = useContext(GidContext)
+
 	const { isFetching, sections } = useSections({ projectGid })
 	const sectionList = sections.map(section =>
 		Object.assign(section, { key: section.gid })
