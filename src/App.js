@@ -5,6 +5,7 @@ import Workspace from './components/Workspace'
 import Project from './components/Project'
 import Section from './components/Section'
 import Task from './components/Task.js'
+import Board from './components/Board.js'
 import Home from './Home'
 import { GidContext } from './contexts/GidContext.js'
 
@@ -49,6 +50,9 @@ function App() {
 					<li style={{ listStyleType: 'none', paddingRight: '8px' }}>
 						<Link to="/task">Task</Link>
 					</li>
+					<li style={{ listStyleType: 'none', paddingRight: '8px' }}>
+						<Link to="/board">Board</Link>
+					</li>
 				</ul>
 			</nav>
 			<GidContext.Provider
@@ -74,6 +78,7 @@ function App() {
 						element={<Section updateTaskGids={updateTaskGids} />}
 					/>
 					<Route path="/task" element={<Task />} />
+					<Route path="/board" element={<Board />} />
 					<Route path="/" element={<Home />} />
 					{projectGid}
 				</Routes>
