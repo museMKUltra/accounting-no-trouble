@@ -3,8 +3,8 @@ import RadioList from './RadioList'
 import Button from './Button'
 import { useProjects } from '../hooks/asana/useProjects.js'
 import ProjectCustomField from './ProjectCustomField.js'
-import { useCheckbox } from '../hooks/useCheckbox.js'
-import { useRadio } from '../hooks/useRadio.js'
+import { useCheckbox } from '../reducers/useCheckbox.js'
+import { useRadio } from '../reducers/useRadio.js'
 import { GidContext } from '../contexts/GidContext.js'
 
 function Project({ updateProjectGid }) {

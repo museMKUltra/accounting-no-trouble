@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import Button from './Button'
 import SectionTask from './SectionTask'
 import { useSections } from '../hooks/asana/useSections.js'
-import { useCheckbox } from '../hooks/useCheckbox.js'
+import { useCheckbox } from '../reducers/useCheckbox.js'
 import { GidContext } from '../contexts/GidContext.js'
 
 function Section({ updateTaskGids }) {
