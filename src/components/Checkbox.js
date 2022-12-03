@@ -27,7 +27,10 @@ function Checkbox({
 			/>
 			<label
 				htmlFor={checkbox.key}
-				style={{ color: disabled ? 'lightgray' : 'black' }}
+				style={{
+					color: disabled ? 'lightgray' : 'black',
+					cursor: disabled ? 'default' : 'pointer',
+				}}
 			>
 				{checkbox.name}
 			</label>
