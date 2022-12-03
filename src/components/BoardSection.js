@@ -19,19 +19,25 @@ function BoardSection({ section }) {
 				<p>fetching...</p>
 			) : (
 				hasTasks && (
-					<div
-						style={{
-							display: 'flex',
-							alignItems: 'center',
-							border: '1px solid grey',
-							padding: '12px 16px',
-						}}
-					>
-						<p style={{ width: '140px' }}>{section.name}</p>
-						<div style={{ flex: '1' }}>
-							<BoardTasks tasks={tasks} />
+					<>
+						<div
+							style={{
+								display: 'flex',
+								gap: '12px',
+								alignItems: 'center',
+								border: '1px solid grey',
+								padding: '16px',
+								margin: '16px 0',
+							}}
+						>
+							<h2 style={{ fontSize: '16px', padding: 0, width: '20%' }}>
+								{section.name}
+							</h2>
+							<div style={{ flex: '1' }}>
+								<BoardTasks tasks={tasks} />
+							</div>
 						</div>
-					</div>
+					</>
 				)
 			)}
 		</>

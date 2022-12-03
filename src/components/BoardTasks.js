@@ -105,39 +105,52 @@ function BoardTasks({ tasks }) {
 			{isFetching ? (
 				<p>fetching...</p>
 			) : (
-				<div style={{ display: 'grid', gap: '8px' }}>
+				<div style={{ display: 'grid', gap: '12px' }}>
 					{taskList.map(task => {
 						const checked = checkedCheckboxes.includes(task.key)
 						const disabled = disabledCheckboxes.includes(task.key)
 
 						return (
-							<div key={task.key}>
-								<div>{task.startOn}</div>
-								<div>{task.dueOn}</div>
-								<Checkbox
-									checked={checked}
-									disabled={disabled}
-									checkbox={task}
-									uncheckCheckbox={uncheckCheckbox}
-									checkCheckbox={checkCheckbox}
-								>
+							<div
+								key={task.key}
+								style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
+							>
+								<div style={{ width: '40%' }}>
+									<Checkbox
+										checked={checked}
+										disabled={disabled}
+										checkbox={task}
+										uncheckCheckbox={uncheckCheckbox}
+										checkCheckbox={checkCheckbox}
+									/>
+								</div>
+								<div style={{ flex: '1', display: 'grid', gap: '4px' }}>
 									{disabled || (
-										<div
-											style={{
-												paddingLeft: task.paddingLeft,
-												paddingRight: task.paddingRight,
-											}}
-										>
+										<>
+											<div>
+												<span>{task.startOn}</span>
+												&nbsp;~&nbsp;
+												<span>{task.dueOn}</span>
+											</div>
 											<div
 												style={{
-													height: '8px',
-													background: 'gray',
+													paddingLeft: task.paddingLeft,
+													paddingRight: task.paddingRight,
+													background: 'lightgray',
 													borderRadius: '4px',
 												}}
-											/>
-										</div>
+											>
+												<div
+													style={{
+														height: '8px',
+														background: 'gray',
+														borderRadius: '4px',
+													}}
+												/>
+											</div>
+										</>
 									)}
-								</Checkbox>
+								</div>
 							</div>
 						)
 					})}
