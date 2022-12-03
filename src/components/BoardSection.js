@@ -30,7 +30,13 @@ function BoardSection({ section }) {
 								margin: '16px 0',
 							}}
 						>
-							<h2 style={{ fontSize: '16px', padding: 0, width: '20%' }}>
+							<h2
+								style={{
+									fontSize: '16px',
+									padding: 0,
+									width: '20%',
+								}}
+							>
 								{section.name}
 							</h2>
 							<div style={{ flex: '1' }}>

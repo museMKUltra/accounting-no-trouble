@@ -86,16 +86,11 @@ function BoardTasks({ tasks }) {
 				paddingRight,
 				customFields: task.custom_fields
 					.filter(customField => customFieldGids.includes(customField.gid))
-					.map(customField =>
-						Object.assign(
-							{},
-							{
-								key: customField.gid,
-								name: customField.name,
-								displayValue: customField.display_value,
-							}
-						)
-					),
+					.map(customField => ({
+						key: customField.gid,
+						name: customField.name,
+						displayValue: customField.display_value,
+					})),
 			}
 		)
 	})
@@ -115,7 +110,7 @@ function BoardTasks({ tasks }) {
 								key={task.key}
 								style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
 							>
-								<div style={{ width: '40%' }}>
+								<div style={{ width: '30%' }}>
 									<Checkbox
 										checked={checked}
 										disabled={disabled}
@@ -124,9 +119,16 @@ function BoardTasks({ tasks }) {
 										checkCheckbox={checkCheckbox}
 									/>
 								</div>
-								<div style={{ flex: '1', display: 'grid', gap: '4px' }}>
-									{disabled || (
-										<>
+								{disabled || (
+									<>
+										<div
+											style={{
+												flex: '1',
+												display: 'grid',
+												gap: '4px',
+												opacity: checked ? 1 : 0.2,
+											}}
+										>
 											<div>
 												<span>{task.startOn}</span>
 												&nbsp;~&nbsp;
@@ -148,9 +150,42 @@ function BoardTasks({ tasks }) {
 													}}
 												/>
 											</div>
-										</>
-									)}
-								</div>
+										</div>
+										<div
+											style={{
+												width: '10%',
+												display: 'flex',
+												justifyContent: 'center',
+											}}
+										>
+											{task.customFields[0].displayValue}
+										</div>
+										<div
+											style={{
+												width: '10%',
+												display: 'flex',
+												justifyContent: 'center',
+											}}
+										>
+											{checked && (
+												<button
+													disabled={
+														task.customFields[0].displayValue === '16.00'
+													}
+													style={{
+														width: '90%',
+														cursor:
+															task.customFields[0].displayValue === '16.00'
+																? 'default'
+																: 'pointer',
+													}}
+												>
+													16.00
+												</button>
+											)}
+										</div>
+									</>
+								)}
 							</div>
 						)
 					})}
