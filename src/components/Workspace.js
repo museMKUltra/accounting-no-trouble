@@ -2,7 +2,7 @@ import React from 'react'
 import RadioList from './RadioList'
 import Button from './Button'
 import { useUsersMe } from '../hooks/asana/useUsersMe.js'
-import { useRadio } from '../hooks/useRadio.js'
+import { useRadio } from '../reducers/useRadio.js'
 
 function Workspace({ updateWorkspaceGid }) {
 	const { isFetching, workspaces, meGid } = useUsersMe()

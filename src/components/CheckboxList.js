@@ -1,31 +1,31 @@
 import React from 'react'
+import Checkbox from './Checkbox.js'
 
 function CheckboxList({
 	checkedCheckboxes,
+	disabledCheckboxes = [],
 	checkboxList,
 	checkCheckbox,
 	uncheckCheckbox,
 }) {
 	return (
 		<ul>
-			{checkboxList.map(checkbox => (
-				<li key={checkbox.key} style={{ listStyleType: 'none' }}>
-					<input
-						type="checkbox"
-						value={checkbox.key}
-						id={checkbox.key}
-						checked={checkedCheckboxes.includes(checkbox.key)}
-						onChange={event => {
-							if (event.target.checked) {
-								checkCheckbox(checkbox.key)
-							} else {
-								uncheckCheckbox(checkbox.key)
-							}
-						}}
-					/>
-					<label htmlFor={checkbox.key}>{checkbox.name}</label>
-				</li>
-			))}
+			{checkboxList.map(checkbox => {
+				const checked = checkedCheckboxes.includes(checkbox.key)
+				const disabled = disabledCheckboxes.includes(checkbox.key)
+
+				return (
+					<li key={checkbox.key} style={{ listStyleType: 'none' }}>
+						<Checkbox
+							checkbox={checkbox}
+							checked={checked}
+							disabled={disabled}
+							checkCheckbox={checkCheckbox}
+							uncheckCheckbox={uncheckCheckbox}
+						/>
+					</li>
+				)
+			})}
 		</ul>
 	)
 }
