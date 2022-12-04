@@ -29,8 +29,13 @@ function BoardTasks({ tasks }) {
 				.map(task => task.gid),
 		[detailTasks]
 	)
-	const { dateline, proposeStartOn, proposeDueOn, appendAccountingTask } =
-		useContext(DatelineContext)
+	const {
+		dateline,
+		proposeStartOn,
+		proposeDueOn,
+		appendAccountingTask,
+		deleteAccountingTask,
+	} = useContext(DatelineContext)
 	const taskDateline = useCallback(({ start_on: startOn, due_on: dueOn }) => {
 		if (startOn && !dueOn) {
 			return { startOn, dueOn: startOn }
@@ -46,6 +51,7 @@ function BoardTasks({ tasks }) {
 
 		return taskDateline(task)
 	}
+
 	const handleCheckboxCheck = taskGid => {
 		const { startOn, dueOn } = getTaskDueDates(taskGid)
 		const timeStartOn = new Date(startOn).getTime()
@@ -61,6 +67,11 @@ function BoardTasks({ tasks }) {
 			}).filter(date => ACCOUNTING_DAYS.includes(new Date(date).getDay())),
 		})
 		checkCheckbox(taskGid)
+	}
+
+	const handleCheckboxUncheck = taskGid => {
+		deleteAccountingTask(taskGid)
+		uncheckCheckbox(taskGid)
 	}
 
 	useEffect(() => {
@@ -140,8 +151,8 @@ function BoardTasks({ tasks }) {
 										checked={checked}
 										disabled={disabled}
 										checkbox={task}
-										uncheckCheckbox={uncheckCheckbox}
 										checkCheckbox={handleCheckboxCheck}
+										uncheckCheckbox={handleCheckboxUncheck}
 									/>
 								</div>
 								{disabled || (

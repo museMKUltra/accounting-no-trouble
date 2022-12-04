@@ -73,7 +73,7 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				accountingTasks: state.accountingTasks.filter(
-					task => task.gid !== action.task.gid
+					task => task.gid !== action.taskGid
 				),
 			}
 		default:
@@ -89,6 +89,6 @@ export function useDateline() {
 		proposeStartOn: startOn => dispatch({ type: 'start', startOn }),
 		proposeDueOn: dueOn => dispatch({ type: 'due', dueOn }),
 		appendAccountingTask: task => dispatch({ type: 'add', task }),
-		deleteAccountingTask: task => dispatch({ type: 'remove', task }),
+		deleteAccountingTask: taskGid => dispatch({ type: 'remove', taskGid }),
 	}
 }
