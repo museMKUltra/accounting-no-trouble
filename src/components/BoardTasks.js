@@ -19,9 +19,9 @@ const percentageFormatter = total => number =>
 
 function BoardTasks({ tasks }) {
 	const { customFieldGids } = useContext(GidContext)
+
 	const taskGids = useMemo(() => tasks.map(task => task.gid), [tasks])
 	const { isFetching, detailTasks } = useDetailTasks({ taskGids })
-	const { checkedCheckboxes, checkCheckbox, uncheckCheckbox } = useCheckbox()
 	const disabledCheckboxes = useMemo(
 		() =>
 			detailTasks
@@ -29,6 +29,17 @@ function BoardTasks({ tasks }) {
 				.map(task => task.gid),
 		[detailTasks]
 	)
+	useEffect(() => {
+		const { startOn, dueOn } = detailTasks.reduce((dateline, task) => {
+			const { startOn, dueOn } = taskDateline(task)
+
+			return dealDueOnDateline(dealStartOnDateline(dateline, startOn), dueOn)
+		}, defaultDateline)
+
+		proposeStartOn(startOn)
+		proposeDueOn(dueOn)
+	}, [detailTasks])
+
 	const {
 		dateline,
 		proposeStartOn,
@@ -36,6 +47,7 @@ function BoardTasks({ tasks }) {
 		appendAccountingTask,
 		deleteAccountingTask,
 	} = useContext(DatelineContext)
+	const { checkedCheckboxes, checkCheckbox, uncheckCheckbox } = useCheckbox()
 	const taskDateline = useCallback(({ start_on: startOn, due_on: dueOn }) => {
 		if (startOn && !dueOn) {
 			return { startOn, dueOn: startOn }
@@ -74,16 +86,28 @@ function BoardTasks({ tasks }) {
 		uncheckCheckbox(taskGid)
 	}
 
-	useEffect(() => {
-		const { startOn, dueOn } = detailTasks.reduce((dateline, task) => {
-			const { startOn, dueOn } = taskDateline(task)
+	const getSuggestiveProportion = taskGid => {
+		const { accountingTasks } = dateline
+		const task = accountingTasks.find(task => task.gid === taskGid)
 
-			return dealDueOnDateline(dealStartOnDateline(dateline, startOn), dueOn)
-		}, defaultDateline)
+		if (!task) {
+			return null
+		}
 
-		proposeStartOn(startOn)
-		proposeDueOn(dueOn)
-	}, [detailTasks])
+		const accountingTaskCount = date => {
+			return accountingTasks.reduce(
+				(total, task) => (task.dates.includes(date) ? total + 1 : total),
+				0
+			)
+		}
+		const totalProportion = task.dates.reduce((total, date) => {
+			const proportion = 1 / accountingTaskCount(date)
+
+			return total + proportion
+		}, 0)
+
+		return totalProportion.toFixed(2)
+	}
 
 	const taskList = detailTasks.map(task => {
 		const { startOn, dueOn } = taskDateline(task)
@@ -110,6 +134,7 @@ function BoardTasks({ tasks }) {
 		}
 
 		const { paddingLeft, paddingRight } = datelineSpace()
+		const suggestiveProportion = getSuggestiveProportion(task.gid)
 
 		return Object.assign(
 			{},
@@ -120,6 +145,7 @@ function BoardTasks({ tasks }) {
 				dueOn: task.due_on,
 				paddingLeft,
 				paddingRight,
+				suggestiveProportion,
 				customFields: task.custom_fields
 					.filter(customField => customFieldGids.includes(customField.gid))
 					.map(customField => ({
@@ -206,17 +232,19 @@ function BoardTasks({ tasks }) {
 											{checked && (
 												<button
 													disabled={
-														task.customFields[0].displayValue === '16.00'
+														task.customFields[0].displayValue ===
+														task.suggestiveProportion
 													}
 													style={{
 														width: '90%',
 														cursor:
-															task.customFields[0].displayValue === '16.00'
+															task.customFields[0].displayValue ===
+															task.suggestiveProportion
 																? 'default'
 																: 'pointer',
 													}}
 												>
-													16.00
+													{task.suggestiveProportion}
 												</button>
 											)}
 										</div>
