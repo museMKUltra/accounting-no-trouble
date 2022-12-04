@@ -19,7 +19,13 @@ function Board() {
 		Object.assign(section, { key: section.gid })
 	)
 
-	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
+	const {
+		dateline,
+		proposeStartOn,
+		proposeDueOn,
+		appendAccountingTask,
+		deleteAccountingTask,
+	} = useDateline()
 
 	return (
 		<GidContext.Provider
@@ -35,6 +41,8 @@ function Board() {
 					dateline,
 					proposeStartOn,
 					proposeDueOn,
+					appendAccountingTask,
+					deleteAccountingTask,
 				}}
 			>
 				<h1>Board</h1>

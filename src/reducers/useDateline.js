@@ -1,6 +1,10 @@
 import { useReducer } from 'react'
 
-export const defaultDateline = { startOn: null, dueOn: null }
+export const defaultDateline = {
+	startOn: null,
+	dueOn: null,
+	accountingTasks: [],
+}
 
 export function getTimeStartOn(startOn) {
 	const dateStartOn = new Date(startOn)
@@ -60,6 +64,18 @@ const reducer = (state, action) => {
 			return dealStartOnDateline(state, action.startOn)
 		case 'due':
 			return dealDueOnDateline(state, action.dueOn)
+		case 'add':
+			return {
+				...state,
+				accountingTasks: state.accountingTasks.concat([action.task]),
+			}
+		case 'remove':
+			return {
+				...state,
+				accountingTasks: state.accountingTasks.filter(
+					task => task.gid !== action.task.gid
+				),
+			}
 		default:
 			return state
 	}
@@ -72,5 +88,7 @@ export function useDateline() {
 		dateline: state,
 		proposeStartOn: startOn => dispatch({ type: 'start', startOn }),
 		proposeDueOn: dueOn => dispatch({ type: 'due', dueOn }),
+		appendAccountingTask: task => dispatch({ type: 'add', task }),
+		deleteAccountingTask: task => dispatch({ type: 'remove', task }),
 	}
 }
