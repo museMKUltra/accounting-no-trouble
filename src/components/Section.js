@@ -37,7 +37,7 @@ function Section({ updateTaskGids }) {
 					</div>
 				))
 			)}
-			<Button isDisabled={sectionList.length === 0} handleClick={handleClick}>
+			<Button disabled={sectionList.length === 0} handleClick={handleClick}>
 				confirm
 			</Button>
 		</>

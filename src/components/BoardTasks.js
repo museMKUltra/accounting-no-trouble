@@ -10,6 +10,7 @@ import {
 	getTimeDueOn,
 	getTimeStartOn,
 } from '../reducers/useDateline.js'
+import Button from './Button.js'
 
 const CUSTOM_FIELD_GID = process.env.REACT_APP_CUSTOM_FIELD_GID
 const ONE_DAY_TIME = 1000 * 60 * 60 * 24
@@ -234,17 +235,12 @@ function BoardTasks({ tasks }) {
 											}}
 										>
 											{checked && (
-												<button
+												<Button
 													disabled={task.customField.isSuggestiveDisabled}
-													style={{
-														width: '90%',
-														cursor: task.customField.isSuggestiveDisabled
-															? 'default'
-															: 'pointer',
-													}}
+													style={{ width: '90%' }}
 												>
 													{task.customField.suggestiveProportion}
-												</button>
+												</Button>
 											)}
 										</div>
 									</>
