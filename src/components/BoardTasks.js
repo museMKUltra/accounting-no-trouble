@@ -5,13 +5,15 @@ import { useCheckbox } from '../reducers/useCheckbox.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import Checkbox from './Checkbox.js'
 import {
+	dealDueOnDateline,
+	dealStartOnDateline,
 	defaultDateline,
 	getTimeDueOn,
 	getTimeStartOn,
-	dealDueOnDateline,
-	dealStartOnDateline,
 } from '../reducers/useDateline.js'
 
+const ONE_DAY_TIME = 1000 * 60 * 60 * 24
+const ACCOUNTING_DAYS = [1, 2, 3, 5]
 const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
 
@@ -27,7 +29,8 @@ function BoardTasks({ tasks }) {
 				.map(task => task.gid),
 		[detailTasks]
 	)
-	const { proposeStartOn, proposeDueOn, dateline } = useContext(DatelineContext)
+	const { dateline, proposeStartOn, proposeDueOn, appendAccountingTask } =
+		useContext(DatelineContext)
 	const taskDateline = useCallback(({ start_on: startOn, due_on: dueOn }) => {
 		if (startOn && !dueOn) {
 			return { startOn, dueOn: startOn }
@@ -37,6 +40,28 @@ function BoardTasks({ tasks }) {
 		}
 		return { startOn, dueOn }
 	}, [])
+
+	const getTaskDueDates = taskGid => {
+		const task = detailTasks.find(task => task.gid === taskGid) || {}
+
+		return taskDateline(task)
+	}
+	const handleCheckboxCheck = taskGid => {
+		const { startOn, dueOn } = getTaskDueDates(taskGid)
+		const timeStartOn = new Date(startOn).getTime()
+		const timeDueOn = new Date(dueOn).getTime()
+		const dayCount = Math.round((timeDueOn - timeStartOn) / ONE_DAY_TIME)
+
+		appendAccountingTask({
+			gid: taskGid,
+			dates: Array.from(Array(dayCount).keys(), index => {
+				const date = new Date(startOn)
+				date.setDate(date.getDate() + index)
+				return date.toISOString().slice(0, 10)
+			}).filter(date => ACCOUNTING_DAYS.includes(new Date(date).getDay())),
+		})
+		checkCheckbox(taskGid)
+	}
 
 	useEffect(() => {
 		const { startOn, dueOn } = detailTasks.reduce((dateline, task) => {
@@ -116,7 +141,7 @@ function BoardTasks({ tasks }) {
 										disabled={disabled}
 										checkbox={task}
 										uncheckCheckbox={uncheckCheckbox}
-										checkCheckbox={checkCheckbox}
+										checkCheckbox={handleCheckboxCheck}
 									/>
 								</div>
 								{disabled || (
