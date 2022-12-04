@@ -1,8 +1,14 @@
-import React, { useCallback, useContext, useEffect, useMemo } from 'react'
+import React, {
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react'
+import Button from './Button.js'
+import Checkbox from './Checkbox.js'
 import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
 import { useCheckbox } from '../reducers/useCheckbox.js'
-import { DatelineContext } from '../contexts/DatelineContext.js'
-import Checkbox from './Checkbox.js'
 import {
 	dealDueOnDateline,
 	dealStartOnDateline,
@@ -10,73 +16,80 @@ import {
 	getTimeDueOn,
 	getTimeStartOn,
 } from '../reducers/useDateline.js'
-import Button from './Button.js'
+import { DatelineContext } from '../contexts/DatelineContext.js'
+import { ProportionContext } from '../contexts/ProportionContext.js'
 
 const CUSTOM_FIELD_GID = process.env.REACT_APP_CUSTOM_FIELD_GID
-const ONE_DAY_TIME = 1000 * 60 * 60 * 24
-const ACCOUNTING_DAYS = [1, 2, 3, 5]
 const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
 
 function BoardTasks({ tasks }) {
-	const taskGids = useMemo(() => tasks.map(task => task.gid), [tasks])
-	const { isFetching, detailTasks } = useDetailTasks({ taskGids })
-	const disabledCheckboxes = useMemo(
-		() =>
-			detailTasks
-				.filter(task => !task.start_on && !task.due_on)
-				.map(task => task.gid),
-		[detailTasks]
-	)
+	const [taskList, setTaskList] = useState([])
+	const { dateline, proposeStartOn, proposeDueOn } = useContext(DatelineContext)
 	useEffect(() => {
-		const { startOn, dueOn } = detailTasks.reduce((dateline, task) => {
-			const { startOn, dueOn } = taskDateline(task)
-
-			return dealDueOnDateline(dealStartOnDateline(dateline, startOn), dueOn)
-		}, defaultDateline)
+		const { startOn, dueOn } = taskList.reduce(
+			(dateline, { startOn, dueOn }) =>
+				dealDueOnDateline(dealStartOnDateline(dateline, startOn), dueOn),
+			defaultDateline
+		)
 
 		proposeStartOn(startOn)
 		proposeDueOn(dueOn)
+	}, [taskList])
+
+	const taskGids = useMemo(() => tasks.map(task => task.gid), [tasks])
+	const { isFetching, detailTasks } = useDetailTasks({ taskGids })
+	useEffect(() => {
+		const taskList = detailTasks.map(task => {
+			const { startOn, dueOn } = (() => {
+				const { start_on: startOn, due_on: dueOn } = task
+				if (startOn && !dueOn) {
+					return { startOn, dueOn: startOn }
+				}
+				if (!startOn && dueOn) {
+					return { startOn: dueOn, dueOn }
+				}
+				return { startOn, dueOn }
+			})()
+			const customField = (() => {
+				const { custom_fields: customFields = [] } = task
+				const customField =
+					customFields.find(
+						customField => customField.gid === CUSTOM_FIELD_GID
+					) || {}
+
+				return {
+					gid: customField.gid,
+					key: customField.gid,
+					name: customField.name,
+					displayValue: customField.display_value,
+				}
+			})()
+
+			return {
+				gid: task.gid,
+				key: task.gid,
+				name: task.name,
+				startOn,
+				dueOn,
+				customField,
+			}
+		})
+
+		setTaskList(taskList)
 	}, [detailTasks])
 
-	const {
-		dateline,
-		proposeStartOn,
-		proposeDueOn,
-		appendAccountingTask,
-		deleteAccountingTask,
-	} = useContext(DatelineContext)
 	const { checkedCheckboxes, checkCheckbox, uncheckCheckbox } = useCheckbox()
-	const taskDateline = useCallback(({ start_on: startOn, due_on: dueOn }) => {
-		if (startOn && !dueOn) {
-			return { startOn, dueOn: startOn }
-		}
-		if (!startOn && dueOn) {
-			return { startOn: dueOn, dueOn }
-		}
-		return { startOn, dueOn }
-	}, [])
-
-	const getTaskDueDates = taskGid => {
-		const task = detailTasks.find(task => task.gid === taskGid) || {}
-
-		return taskDateline(task)
-	}
+	const { accountingTasks, appendAccountingTask, deleteAccountingTask } =
+		useContext(ProportionContext)
+	const getSuggestiveProportion = useCallback(
+		taskId => accountingTasks.find(task => task.gid === taskId)?.proportion,
+		[accountingTasks]
+	)
 
 	const handleCheckboxCheck = taskGid => {
-		const { startOn, dueOn } = getTaskDueDates(taskGid)
-		const timeStartOn = new Date(startOn).getTime()
-		const timeDueOn = new Date(dueOn).getTime()
-		const dayCount = Math.round((timeDueOn - timeStartOn) / ONE_DAY_TIME)
-
-		appendAccountingTask({
-			gid: taskGid,
-			dates: Array.from(Array(dayCount).keys(), index => {
-				const date = new Date(startOn)
-				date.setDate(date.getDate() + index)
-				return date.toISOString().slice(0, 10)
-			}).filter(date => ACCOUNTING_DAYS.includes(new Date(date).getDay())),
-		})
+		const task = taskList.find(task => task.gid === taskGid)
+		appendAccountingTask(task)
 		checkCheckbox(taskGid)
 	}
 
@@ -84,82 +97,6 @@ function BoardTasks({ tasks }) {
 		deleteAccountingTask(taskGid)
 		uncheckCheckbox(taskGid)
 	}
-
-	const getSuggestiveProportion = taskGid => {
-		const { accountingTasks } = dateline
-		const task = accountingTasks.find(task => task.gid === taskGid)
-
-		if (!task) {
-			return null
-		}
-
-		const accountingTaskCount = date => {
-			return accountingTasks.reduce(
-				(total, task) => (task.dates.includes(date) ? total + 1 : total),
-				0
-			)
-		}
-		const totalProportion = task.dates.reduce((total, date) => {
-			const proportion = 1 / accountingTaskCount(date)
-
-			return total + proportion
-		}, 0)
-
-		return totalProportion.toFixed(2)
-	}
-
-	const taskList = detailTasks.map(task => {
-		const { startOn, dueOn } = taskDateline(task)
-		const isAllTimeReady =
-			startOn && dueOn && dateline.startOn && dateline.dueOn
-
-		const { paddingLeft, paddingRight } = (() => {
-			if (!isAllTimeReady) {
-				return {
-					paddingLeft: 0,
-					paddingRight: 0,
-				}
-			}
-
-			const gapTotal = dateline.dueOn - dateline.startOn
-			const gapStartOn = getTimeStartOn(startOn) - dateline.startOn
-			const gapDueOn = dateline.dueOn - getTimeDueOn(dueOn)
-			const formatPercentage = percentageFormatter(gapTotal)
-
-			return {
-				paddingLeft: formatPercentage(gapStartOn),
-				paddingRight: formatPercentage(gapDueOn),
-			}
-		})()
-
-		const customField = (() => {
-			const { custom_fields: customFields = [] } = task
-			const customField =
-				customFields.find(
-					customField => customField.gid === CUSTOM_FIELD_GID
-				) || {}
-			const { gid: key, name, display_value: displayValue } = customField
-			const suggestiveProportion = getSuggestiveProportion(task.gid)
-			const isSuggestiveDisabled = displayValue === suggestiveProportion
-
-			return {
-				key,
-				name,
-				displayValue,
-				suggestiveProportion,
-				isSuggestiveDisabled,
-			}
-		})()
-
-		return {
-			key: task.gid,
-			name: task.name,
-			displayDueDate: `${startOn} ~ ${dueOn}`,
-			paddingLeft,
-			paddingRight,
-			customField,
-		}
-	})
 
 	return (
 		<>
@@ -169,7 +106,34 @@ function BoardTasks({ tasks }) {
 				<div style={{ display: 'grid', gap: '12px' }}>
 					{taskList.map(task => {
 						const checked = checkedCheckboxes.includes(task.key)
-						const disabled = disabledCheckboxes.includes(task.key)
+						const disabled = !(task.startOn && task.dueOn)
+						const displayDueDate = `${task.startOn} ~ ${task.dueOn}`
+
+						const { paddingLeft, paddingRight } = (() => {
+							const isAllTimeReady =
+								task.startOn && task.dueOn && dateline.startOn && dateline.dueOn
+
+							if (!isAllTimeReady) {
+								return {
+									paddingLeft: 0,
+									paddingRight: 0,
+								}
+							}
+
+							const gapTotal = dateline.dueOn - dateline.startOn
+							const gapStartOn = getTimeStartOn(task.startOn) - dateline.startOn
+							const gapDueOn = dateline.dueOn - getTimeDueOn(task.dueOn)
+							const formatPercentage = percentageFormatter(gapTotal)
+
+							return {
+								paddingLeft: formatPercentage(gapStartOn),
+								paddingRight: formatPercentage(gapDueOn),
+							}
+						})()
+
+						const suggestiveProportion = getSuggestiveProportion(task.gid)
+						const isSuggestiveDisabled =
+							task.customField.displayValue === suggestiveProportion
 
 						return (
 							<div
@@ -195,11 +159,11 @@ function BoardTasks({ tasks }) {
 												opacity: checked ? 1 : 0.2,
 											}}
 										>
-											<div>{task.displayDueDate}</div>
+											<div>{displayDueDate}</div>
 											<div
 												style={{
-													paddingLeft: task.paddingLeft,
-													paddingRight: task.paddingRight,
+													paddingLeft,
+													paddingRight,
 													background: 'lightgray',
 													borderRadius: '4px',
 												}}
@@ -231,10 +195,10 @@ function BoardTasks({ tasks }) {
 										>
 											{checked && (
 												<Button
-													disabled={task.customField.isSuggestiveDisabled}
+													disabled={isSuggestiveDisabled}
 													style={{ width: '90%' }}
 												>
-													{task.customField.suggestiveProportion}
+													{suggestiveProportion}
 												</Button>
 											)}
 										</div>
