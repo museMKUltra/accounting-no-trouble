@@ -154,8 +154,7 @@ function BoardTasks({ tasks }) {
 		return {
 			key: task.gid,
 			name: task.name,
-			startOn: task.start_on,
-			dueOn: task.due_on,
+			displayDueDate: `${startOn} ~ ${dueOn}`,
 			paddingLeft,
 			paddingRight,
 			customField,
@@ -196,11 +195,7 @@ function BoardTasks({ tasks }) {
 												opacity: checked ? 1 : 0.2,
 											}}
 										>
-											<div>
-												<span>{task.startOn}</span>
-												&nbsp;~&nbsp;
-												<span>{task.dueOn}</span>
-											</div>
+											<div>{task.displayDueDate}</div>
 											<div
 												style={{
 													paddingLeft: task.paddingLeft,
