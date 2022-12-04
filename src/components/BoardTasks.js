@@ -98,6 +98,23 @@ function BoardTasks({ tasks }) {
 		uncheckCheckbox(taskGid)
 	}
 
+	const submitSuggestiveProportion = taskGid => {
+		setTaskList(
+			taskList.map(task => {
+				if (task.gid !== taskGid) {
+					return task
+				}
+				return {
+					...task,
+					customField: {
+						...task.customField,
+						displayValue: getSuggestiveProportion(task.gid),
+					},
+				}
+			})
+		)
+	}
+
 	return (
 		<>
 			{isFetching ? (
@@ -197,6 +214,9 @@ function BoardTasks({ tasks }) {
 												<Button
 													disabled={isSuggestiveDisabled}
 													style={{ width: '90%' }}
+													handleClick={() =>
+														submitSuggestiveProportion(task.gid)
+													}
 												>
 													{suggestiveProportion}
 												</Button>
