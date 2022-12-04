@@ -22,7 +22,9 @@ function RadioList({
 							checked={isChecked}
 							onChange={() => updateCurrentRadio(radio.key)}
 						/>
-						<label htmlFor={radio.key}>{radio.name}</label>
+						<label style={{ cursor: 'pointer' }} htmlFor={radio.key}>
+							{radio.name}
+						</label>
 						{isChecked && children}
 					</li>
 				)

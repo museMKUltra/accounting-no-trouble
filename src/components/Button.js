@@ -1,8 +1,13 @@
 import React from 'react'
 
-function Button({ handleClick, children, isDisabled }) {
+function Button({ handleClick, children, disabled }) {
 	return (
-		<button disabled={isDisabled} type="button" onClick={handleClick}>
+		<button
+			style={{ cursor: disabled ? 'default' : 'pointer' }}
+			disabled={disabled}
+			type="button"
+			onClick={handleClick}
+		>
 			{children}
 		</button>
 	)

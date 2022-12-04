@@ -1,10 +1,12 @@
 import React from 'react'
 import { useUsersMe } from '../hooks/asana/useUsersMe.js'
 import BoardSection from './BoardSection.js'
-import { GidContext } from '../contexts/GidContext.js'
 import { useSections } from '../hooks/asana/useSections.js'
-import { DatelineContext } from '../contexts/DatelineContext.js'
 import { useDateline } from '../reducers/useDateline.js'
+import { useProportion } from '../reducers/useProportion.js'
+import { GidContext } from '../contexts/GidContext.js'
+import { DatelineContext } from '../contexts/DatelineContext.js'
+import { ProportionContext } from '../contexts/ProportionContext.js'
 
 const workspaceGid = process.env.REACT_APP_WORKSPACE_GID
 const projectGid = process.env.REACT_APP_PROJECT_GID
@@ -20,6 +22,9 @@ function Board() {
 	)
 
 	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
+
+	const { accountingTasks, appendAccountingTask, deleteAccountingTask } =
+		useProportion()
 
 	return (
 		<GidContext.Provider
@@ -37,14 +42,22 @@ function Board() {
 					proposeDueOn,
 				}}
 			>
-				<h1>Board</h1>
-				{isUsersMeFetching || isSectionsFetching ? (
-					<p>fetching...</p>
-				) : (
-					sectionList.map(section => (
-						<BoardSection key={section.key} section={section} />
-					))
-				)}
+				<ProportionContext.Provider
+					value={{
+						accountingTasks,
+						appendAccountingTask,
+						deleteAccountingTask,
+					}}
+				>
+					<h1>Board</h1>
+					{isUsersMeFetching || isSectionsFetching ? (
+						<p>fetching...</p>
+					) : (
+						sectionList.map(section => (
+							<BoardSection key={section.key} section={section} />
+						))
+					)}
+				</ProportionContext.Provider>
 			</DatelineContext.Provider>
 		</GidContext.Provider>
 	)

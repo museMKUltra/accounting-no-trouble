@@ -28,7 +28,7 @@ function Workspace({ updateWorkspaceGid }) {
 					updateCurrentRadio={updateRadio}
 				/>
 			)}
-			<Button isDisabled={!checkedRadio} handleClick={handleClick}>
+			<Button disabled={!checkedRadio} handleClick={handleClick}>
 				confirm
 			</Button>
 		</>

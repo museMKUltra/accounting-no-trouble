@@ -1,6 +1,9 @@
 import { useReducer } from 'react'
 
-export const defaultDateline = { startOn: null, dueOn: null }
+export const defaultDateline = {
+	startOn: null,
+	dueOn: null,
+}
 
 export function getTimeStartOn(startOn) {
 	const dateStartOn = new Date(startOn)

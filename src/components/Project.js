@@ -47,7 +47,7 @@ function Project({ updateProjectGid }) {
 					/>
 				</RadioList>
 			)}
-			<Button isDisabled={!checkedRadio} handleClick={handleClick}>
+			<Button disabled={!checkedRadio} handleClick={handleClick}>
 				confirm
 			</Button>
 		</>
