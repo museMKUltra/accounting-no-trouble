@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo } from 'react'
 import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
-import { GidContext } from '../contexts/GidContext.js'
 import { useCheckbox } from '../reducers/useCheckbox.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import Checkbox from './Checkbox.js'
@@ -12,14 +11,13 @@ import {
 	getTimeStartOn,
 } from '../reducers/useDateline.js'
 
+const CUSTOM_FIELD_GID = process.env.REACT_APP_CUSTOM_FIELD_GID
 const ONE_DAY_TIME = 1000 * 60 * 60 * 24
 const ACCOUNTING_DAYS = [1, 2, 3, 5]
 const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
 
 function BoardTasks({ tasks }) {
-	const { customFieldGids } = useContext(GidContext)
-
 	const taskGids = useMemo(() => tasks.map(task => task.gid), [tasks])
 	const { isFetching, detailTasks } = useDetailTasks({ taskGids })
 	const disabledCheckboxes = useMemo(
@@ -114,7 +112,7 @@ function BoardTasks({ tasks }) {
 		const isAllTimeReady =
 			startOn && dueOn && dateline.startOn && dateline.dueOn
 
-		const datelineSpace = () => {
+		const { paddingLeft, paddingRight } = (() => {
 			if (!isAllTimeReady) {
 				return {
 					paddingLeft: 0,
@@ -131,30 +129,36 @@ function BoardTasks({ tasks }) {
 				paddingLeft: formatPercentage(gapStartOn),
 				paddingRight: formatPercentage(gapDueOn),
 			}
-		}
+		})()
 
-		const { paddingLeft, paddingRight } = datelineSpace()
-		const suggestiveProportion = getSuggestiveProportion(task.gid)
+		const customField = (() => {
+			const { custom_fields: customFields = [] } = task
+			const customField =
+				customFields.find(
+					customField => customField.gid === CUSTOM_FIELD_GID
+				) || {}
+			const { gid: key, name, display_value: displayValue } = customField
+			const suggestiveProportion = getSuggestiveProportion(task.gid)
+			const isSuggestiveDisabled = displayValue === suggestiveProportion
 
-		return Object.assign(
-			{},
-			{
-				key: task.gid,
-				name: task.name,
-				startOn: task.start_on,
-				dueOn: task.due_on,
-				paddingLeft,
-				paddingRight,
+			return {
+				key,
+				name,
+				displayValue,
 				suggestiveProportion,
-				customFields: task.custom_fields
-					.filter(customField => customFieldGids.includes(customField.gid))
-					.map(customField => ({
-						key: customField.gid,
-						name: customField.name,
-						displayValue: customField.display_value,
-					})),
+				isSuggestiveDisabled,
 			}
-		)
+		})()
+
+		return {
+			key: task.gid,
+			name: task.name,
+			startOn: task.start_on,
+			dueOn: task.due_on,
+			paddingLeft,
+			paddingRight,
+			customField,
+		}
 	})
 
 	return (
@@ -220,7 +224,7 @@ function BoardTasks({ tasks }) {
 												justifyContent: 'center',
 											}}
 										>
-											{task.customFields[0].displayValue}
+											{task.customField.displayValue}
 										</div>
 										<div
 											style={{
@@ -231,20 +235,15 @@ function BoardTasks({ tasks }) {
 										>
 											{checked && (
 												<button
-													disabled={
-														task.customFields[0].displayValue ===
-														task.suggestiveProportion
-													}
+													disabled={task.customField.isSuggestiveDisabled}
 													style={{
 														width: '90%',
-														cursor:
-															task.customFields[0].displayValue ===
-															task.suggestiveProportion
-																? 'default'
-																: 'pointer',
+														cursor: task.customField.isSuggestiveDisabled
+															? 'default'
+															: 'pointer',
 													}}
 												>
-													{task.suggestiveProportion}
+													{task.customField.suggestiveProportion}
 												</button>
 											)}
 										</div>
