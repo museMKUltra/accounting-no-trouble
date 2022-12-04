@@ -99,6 +99,7 @@ function BoardTasks({ tasks }) {
 	}
 
 	const submitSuggestiveProportion = taskGid => {
+		// TODO: ajax client.tasks.updateTask
 		setTaskList(
 			taskList.map(task => {
 				if (task.gid !== taskGid) {
