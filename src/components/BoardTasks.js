@@ -7,6 +7,7 @@ import React, {
 } from 'react'
 import Button from './Button.js'
 import Checkbox from './Checkbox.js'
+import { updateAsanaTaskCustomField } from '../hooks/asana/asana'
 import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
 import { useCheckbox } from '../reducers/useCheckbox.js'
 import {
@@ -16,6 +17,7 @@ import {
 	getTimeDueOn,
 	getTimeStartOn,
 } from '../reducers/useDateline.js'
+import { formatProportion } from '../reducers/useProportion'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 
@@ -39,6 +41,19 @@ function BoardTasks({ tasks }) {
 
 	const taskGids = useMemo(() => tasks.map(task => task.gid), [tasks])
 	const { isFetching, detailTasks } = useDetailTasks({ taskGids })
+	const getCustomField = useCallback((task, customFieldGid) => {
+		const { custom_fields: customFields = [] } = task
+		const customField =
+			customFields.find(customField => customField.gid === customFieldGid) || {}
+		const { display_value: displayValue } = customField
+
+		return {
+			gid: customField.gid,
+			key: customField.gid,
+			name: customField.name,
+			displayValue: displayValue && formatProportion(parseFloat(displayValue)),
+		}
+	}, [])
 	useEffect(() => {
 		const taskList = detailTasks.map(task => {
 			const { startOn, dueOn } = (() => {
@@ -51,20 +66,6 @@ function BoardTasks({ tasks }) {
 				}
 				return { startOn, dueOn }
 			})()
-			const customField = (() => {
-				const { custom_fields: customFields = [] } = task
-				const customField =
-					customFields.find(
-						customField => customField.gid === CUSTOM_FIELD_GID
-					) || {}
-
-				return {
-					gid: customField.gid,
-					key: customField.gid,
-					name: customField.name,
-					displayValue: customField.display_value,
-				}
-			})()
 
 			return {
 				gid: task.gid,
@@ -72,7 +73,7 @@ function BoardTasks({ tasks }) {
 				name: task.name,
 				startOn,
 				dueOn,
-				customField,
+				customField: getCustomField(task, CUSTOM_FIELD_GID),
 			}
 		})
 
@@ -98,22 +99,30 @@ function BoardTasks({ tasks }) {
 		uncheckCheckbox(taskGid)
 	}
 
-	const submitSuggestiveProportion = taskGid => {
-		// TODO: ajax client.tasks.updateTask
-		setTaskList(
-			taskList.map(task => {
-				if (task.gid !== taskGid) {
-					return task
-				}
-				return {
-					...task,
-					customField: {
-						...task.customField,
-						displayValue: getSuggestiveProportion(task.gid),
-					},
-				}
+	const submitSuggestiveProportion = async task => {
+		const { gid: taskGid } = task
+
+		try {
+			const suggestiveProportion = getSuggestiveProportion(taskGid)
+			const responseTask = await updateAsanaTaskCustomField({
+				taskGid,
+				customFieldGid: CUSTOM_FIELD_GID,
+				customFieldValue: suggestiveProportion,
 			})
-		)
+
+			setTaskList(
+				taskList.map(task => {
+					if (task.gid === taskGid) {
+						return Object.assign(task, {
+							customField: getCustomField(responseTask, CUSTOM_FIELD_GID),
+						})
+					}
+					return task
+				})
+			)
+		} catch (e) {
+			console.error(e)
+		}
 	}
 
 	return (
@@ -215,9 +224,7 @@ function BoardTasks({ tasks }) {
 												<Button
 													disabled={isSuggestiveDisabled}
 													style={{ width: '90%' }}
-													handleClick={() =>
-														submitSuggestiveProportion(task.gid)
-													}
+													handleClick={() => submitSuggestiveProportion(task)}
 												>
 													{suggestiveProportion}
 												</Button>
