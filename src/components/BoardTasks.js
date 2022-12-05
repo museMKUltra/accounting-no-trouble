@@ -26,6 +26,8 @@ const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
 
 function BoardTasks({ tasks }) {
+	const [buttonList, setButtonList] = useState([])
+
 	const [taskList, setTaskList] = useState([])
 	const { dateline, proposeStartOn, proposeDueOn } = useContext(DatelineContext)
 	useEffect(() => {
@@ -55,6 +57,10 @@ function BoardTasks({ tasks }) {
 		}
 	}, [])
 	useEffect(() => {
+		const buttonList = detailTasks.map(task => ({
+			taskGid: task.gid,
+			isLoading: false,
+		}))
 		const taskList = detailTasks.map(task => {
 			const { startOn, dueOn } = (() => {
 				const { start_on: startOn, due_on: dueOn } = task
@@ -77,6 +83,7 @@ function BoardTasks({ tasks }) {
 			}
 		})
 
+		setButtonList(buttonList)
 		setTaskList(taskList)
 	}, [detailTasks])
 
@@ -100,15 +107,25 @@ function BoardTasks({ tasks }) {
 	}
 
 	const submitSuggestiveProportion = async task => {
-		const { gid: taskGid } = task
+		const { gid: taskGid, name: taskName } = task
+		const updateButtonLoading = isLoading => {
+			setButtonList(buttonList =>
+				buttonList.map(button => ({
+					...button,
+					isLoading: button.taskGid === taskGid ? isLoading : button.isLoading,
+				}))
+			)
+		}
 
 		try {
+			updateButtonLoading(true)
 			const suggestiveProportion = getSuggestiveProportion(taskGid)
 			const responseTask = await updateAsanaTaskCustomField({
 				taskGid,
 				customFieldGid: CUSTOM_FIELD_GID,
 				customFieldValue: suggestiveProportion,
 			})
+			alert(`update "${taskName}" to "${suggestiveProportion}" successfully`)
 
 			setTaskList(
 				taskList.map(task => {
@@ -121,7 +138,10 @@ function BoardTasks({ tasks }) {
 				})
 			)
 		} catch (e) {
+			alert(`update "${taskName}" unsuccessfully`)
 			console.error(e)
+		} finally {
+			updateButtonLoading(false)
 		}
 	}
 
@@ -161,6 +181,9 @@ function BoardTasks({ tasks }) {
 						const suggestiveProportion = getSuggestiveProportion(task.gid)
 						const isSuggestiveDisabled =
 							task.customField.displayValue === suggestiveProportion
+						const isButtonLoading =
+							buttonList.find(button => button.taskGid === task.gid)
+								.isLoading || false
 
 						return (
 							<div
@@ -222,11 +245,11 @@ function BoardTasks({ tasks }) {
 										>
 											{checked && (
 												<Button
-													disabled={isSuggestiveDisabled}
+													disabled={isSuggestiveDisabled || isButtonLoading}
 													style={{ width: '90%' }}
 													handleClick={() => submitSuggestiveProportion(task)}
 												>
-													{suggestiveProportion}
+													{isButtonLoading ? 'wait' : suggestiveProportion}
 												</Button>
 											)}
 										</div>
