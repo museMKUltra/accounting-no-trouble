@@ -46,6 +46,39 @@ export async function fetchTasks(workspaceGid, assigneeGid, sectionGid) {
 	return { tasks }
 }
 
+export async function updateAsanaTaskCustomField({
+	taskGid,
+	customFieldGid,
+	customFieldValue,
+}) {
+	const response = await client.tasks.updateTask(taskGid, {
+		custom_fields: {
+			[customFieldGid]: customFieldValue,
+		},
+	})
+	// const response = {
+	// 	custom_fields: [
+	// 		{
+	// 			gid: '1201939511159645',
+	// 			resource_type: 'custom_field',
+	// 			resource_subtype: 'number',
+	// 			type: 'number',
+	// 			name: '估時(天)',
+	// 			enabled: true,
+	// 			precision: 2,
+	// 			number_value: 8,
+	// 			display_value: '8',
+	// 			created_by: {
+	// 				gid: '504260977666421',
+	// 				resource_type: 'user',
+	// 				name: 'Danny Lin',
+	// 			},
+	// 		},
+	// 	],
+	// }
+	return response
+}
+
 export const fetch = async () => {
 	const { assigneeGid, workspaceGid } = await fetchMe()
 	const projectGid = await fetchProjects(workspaceGid)
