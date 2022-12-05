@@ -3,6 +3,10 @@ import { useReducer } from 'react'
 const ONE_DAY_TIME = 1000 * 60 * 60 * 24
 const ACCOUNTING_DAYS = [1, 2, 3, 5]
 
+export function formatProportion(proportion) {
+	return proportion.toFixed(2)
+}
+
 function getAccountingTask(task) {
 	const { gid, startOn, dueOn } = task
 	const timeStartOn = new Date(startOn).getTime()
@@ -35,7 +39,7 @@ function updatedProportionTasks(accountingTasks) {
 		}, 0)
 		return {
 			...task,
-			proportion: totalProportion.toFixed(2),
+			proportion: formatProportion(totalProportion),
 		}
 	})
 }
