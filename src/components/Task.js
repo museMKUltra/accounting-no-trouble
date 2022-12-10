@@ -32,7 +32,7 @@ function Task() {
 
 	return (
 		<>
-			<h1>Task</h1>
+			<h1>Tasks</h1>
 			{isFetching ? (
 				<p>fetching...</p>
 			) : (

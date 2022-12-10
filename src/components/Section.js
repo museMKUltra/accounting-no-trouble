@@ -19,7 +19,7 @@ function Section({ updateTaskGids }) {
 
 	return (
 		<>
-			<h1>Section</h1>
+			<h1>Sections</h1>
 			{isFetching ? (
 				<p>fetching...</p>
 			) : (
