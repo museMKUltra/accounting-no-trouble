@@ -11,7 +11,7 @@ function getAccountingTask(task) {
 	const { gid, startOn, dueOn } = task
 	const timeStartOn = new Date(startOn).getTime()
 	const timeDueOn = new Date(dueOn).getTime()
-	const dayCount = Math.round((timeDueOn - timeStartOn) / ONE_DAY_TIME)
+	const dayCount = Math.round((timeDueOn - timeStartOn) / ONE_DAY_TIME) + 1
 
 	return {
 		gid,
