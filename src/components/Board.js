@@ -7,6 +7,7 @@ import { useProportion } from '../reducers/useProportion.js'
 import { GidContext } from '../contexts/GidContext.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
+import { NavLink } from 'react-router-dom'
 
 const workspaceGid = process.env.REACT_APP_WORKSPACE_GID
 const projectGid = process.env.REACT_APP_PROJECT_GID
@@ -27,39 +28,57 @@ function Board() {
 		useProportion()
 
 	return (
-		<GidContext.Provider
-			value={{
-				workspaceGid,
-				projectGid,
-				customFieldGids,
-				assigneeGid,
-			}}
-		>
-			<DatelineContext.Provider
-				value={{
-					dateline,
-					proposeStartOn,
-					proposeDueOn,
+		<>
+			<nav
+				style={{
+					display: 'flex',
+					direction: 'revert',
+					justifyContent: 'right',
 				}}
 			>
-				<ProportionContext.Provider
+				<NavLink
+					to="/demo"
+					style={({ isActive }) => ({
+						color: isActive ? 'grey' : 'inherit',
+					})}
+				>
+					Demo
+				</NavLink>
+			</nav>
+			<GidContext.Provider
+				value={{
+					workspaceGid,
+					projectGid,
+					customFieldGids,
+					assigneeGid,
+				}}
+			>
+				<DatelineContext.Provider
 					value={{
-						accountingTasks,
-						appendAccountingTask,
-						deleteAccountingTask,
+						dateline,
+						proposeStartOn,
+						proposeDueOn,
 					}}
 				>
-					<h1>Board</h1>
-					{isUsersMeFetching || isSectionsFetching ? (
-						<p>fetching...</p>
-					) : (
-						sectionList.map(section => (
-							<BoardSection key={section.key} section={section} />
-						))
-					)}
-				</ProportionContext.Provider>
-			</DatelineContext.Provider>
-		</GidContext.Provider>
+					<ProportionContext.Provider
+						value={{
+							accountingTasks,
+							appendAccountingTask,
+							deleteAccountingTask,
+						}}
+					>
+						<h1>Board</h1>
+						{isUsersMeFetching || isSectionsFetching ? (
+							<p>fetching...</p>
+						) : (
+							sectionList.map(section => (
+								<BoardSection key={section.key} section={section} />
+							))
+						)}
+					</ProportionContext.Provider>
+				</DatelineContext.Provider>
+			</GidContext.Provider>
+		</>
 	)
 }
 
