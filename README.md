@@ -68,3 +68,28 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Available Docker Compose
+
+### Copy `.env.template`
+
+To create `.env` with environment variables
+
+- How to get asana [PAT](https://developers.asana.com/docs/personal-access-token)
+- How to get asana [GID](https://developers.asana.com/docs/asana)
+
+### Build Image & Start Container
+
+```shell
+docker compose up
+```
+
+### See the Result
+
+[localhost:8080](http://localhost:8080/)
+
+### Stop & Delete Container
+
+```shell
+docker compose down
+```
