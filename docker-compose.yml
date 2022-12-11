@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  ant:
+    build:
+      context: ./
+    ports:
+      - 8080:80
+    restart: unless-stopped
