@@ -34,12 +34,22 @@ function Home() {
 		fetchMe()
 	}, [])
 
+	const logout = () => {
+		localStorage.removeItem('access_token')
+		localStorage.removeItem('refresh_token')
+
+		navigate('/oauth/grant')
+	}
+
 	return (
 		<div>
 			<div>gid: {gid}</div>
 			{workspaces.map(workspace => (
 				<div key={workspace.gid}> workspace: {workspace.gid}</div>
 			))}
+			<button type="button" onClick={logout}>
+				logout
+			</button>
 		</div>
 	)
 }
