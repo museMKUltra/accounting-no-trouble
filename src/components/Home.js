@@ -44,7 +44,15 @@ function Home() {
 	const revoke = () => {
 		const refreshToken = localStorage.getItem('refresh_token')
 
-		fetch(`http://localhost:3030/oauth_revoke?token=${refreshToken}`)
+		fetch('http://localhost:3030/oauth_revoke', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				token: refreshToken,
+			}),
+		})
 			.then(logout)
 			.catch(e => {
 				alert(e)
