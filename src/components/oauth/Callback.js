@@ -19,9 +19,16 @@ function Callback() {
 		}
 
 		const fetchOauthToken = async () => {
-			fetch(
-				`http://localhost:3030/oauth_token?code=${code}&grant_type=authorization_code`
-			)
+			fetch('http://localhost:3030/oauth_token', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					code,
+					grant_type: 'authorization_code',
+				}),
+			})
 				.then(response => response.json())
 				.then(({ access_token, refresh_token }) => {
 					if (!access_token) {

@@ -13,9 +13,16 @@ function Refresh() {
 		}
 
 		const fetchOauthToken = async () => {
-			fetch(
-				`http://localhost:3030/oauth_token?refresh_token=${refreshToken}&grant_type=refresh_token`
-			)
+			fetch('http://localhost:3030/oauth_token', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					refresh_token: refreshToken,
+					grant_type: 'refresh_token',
+				}),
+			})
 				.then(response => response.json())
 				.then(({ access_token }) => {
 					if (!access_token) {
