@@ -9,8 +9,17 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
 
-app.get('/', (req, res) => {
-	res.send('Hello World!')
+app.get('/oauth_authorize', (req, res) => {
+	const url = new URL('https://app.asana.com/-/oauth_authorize')
+	const searchParams = {
+		response_type: 'code',
+		client_id: '1203572903884176',
+		redirect_uri: 'http://localhost:3000/oauth/callback',
+		state: 'state',
+	}
+
+	url.search = new URLSearchParams(searchParams)
+	res.redirect(url)
 })
 
 app.post('/oauth_token', async (req, res) => {
