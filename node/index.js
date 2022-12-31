@@ -37,6 +37,30 @@ app.get('/oauth_token', async (req, res) => {
 		})
 })
 
+app.get('/oauth_revoke', async (req, res) => {
+	axios
+		.post(
+			'https://app.asana.com/-/oauth_revoke',
+			{
+				client_id: '1203572903884176',
+				client_secret: 'a9f03092d64963d6d3a9333e5c5690ec',
+				token: req.query.token,
+			},
+			{
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+			}
+		)
+		.then(function (response) {
+			console.log(response)
+			res.send(response.data)
+		})
+		.catch(function (error) {
+			res.send(error)
+		})
+})
+
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`)
 })

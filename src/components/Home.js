@@ -41,6 +41,16 @@ function Home() {
 		navigate('/oauth/grant')
 	}
 
+	const revoke = () => {
+		const refreshToken = localStorage.getItem('refresh_token')
+
+		fetch(`http://localhost:3030/oauth_revoke?token=${refreshToken}`)
+			.then(logout)
+			.catch(e => {
+				alert(e)
+			})
+	}
+
 	return (
 		<div>
 			<div>gid: {gid}</div>
@@ -49,6 +59,9 @@ function Home() {
 			))}
 			<button type="button" onClick={logout}>
 				logout
+			</button>
+			<button type="button" onClick={revoke}>
+				revoke
 			</button>
 		</div>
 	)
