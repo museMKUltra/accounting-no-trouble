@@ -13,7 +13,7 @@ function Refresh() {
 		}
 
 		const fetchOauthToken = async () => {
-			fetch('http://localhost:3030/oauth_token', {
+			fetch('/oauth_token', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
