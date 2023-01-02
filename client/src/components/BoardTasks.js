@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import Button from './Button.js'
 import Checkbox from './Checkbox.js'
-import { updateAsanaTaskCustomField } from '../hooks/asana/asana'
+import { updateAsanaTaskCustomField } from '../hooks/asana/asana.js'
 import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
 import { useCheckbox } from '../reducers/useCheckbox.js'
 import {
@@ -17,7 +17,7 @@ import {
 	getTimeDueOn,
 	getTimeStartOn,
 } from '../reducers/useDateline.js'
-import { formatProportion } from '../reducers/useProportion'
+import { formatProportion } from '../reducers/useProportion.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 

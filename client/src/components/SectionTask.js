@@ -1,5 +1,5 @@
 import React from 'react'
-import CheckboxList from './CheckboxList'
+import CheckboxList from './CheckboxList.js'
 import { useTasks } from '../hooks/asana/useTasks.js'
 
 function SectionTask({

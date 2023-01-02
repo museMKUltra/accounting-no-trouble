@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
-import RadioList from './RadioList'
-import Button from './Button'
+import RadioList from './RadioList.js'
+import Button from './Button.js'
 import { useProjects } from '../hooks/asana/useProjects.js'
 import ProjectCustomField from './ProjectCustomField.js'
 import { useCheckbox } from '../reducers/useCheckbox.js'
