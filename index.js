@@ -1,20 +1,30 @@
 const express = require('express')
-const cors = require('cors')
+const path = require('path')
 const axios = require('axios')
 const bodyParser = require('body-parser')
-const app = express()
-const port = 3030
 
+const PRODUCTION = 'production'
+const PORT = 3030
+
+const app = express()
+
+if (process.env.NODE_ENV === PRODUCTION) {
+	app.use(express.static(path.join(__dirname, 'client/build')))
+} else {
+	require('dotenv').config()
+	app.use(require('cors')())
+}
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(cors())
+
+const port = process.env.PORT || PORT
 
 app.get('/oauth_authorize', (req, res) => {
 	const url = new URL('https://app.asana.com/-/oauth_authorize')
 	const searchParams = {
 		response_type: 'code',
-		client_id: '1203572903884176',
-		redirect_uri: 'http://localhost:3000/oauth/callback',
+		client_id: process.env.OAUTH_CLIENT_ID,
+		redirect_uri: process.env.OAUTH_REDIRECT_URI,
 		state: 'state',
 	}
 
@@ -28,9 +38,9 @@ app.post('/oauth_token', async (req, res) => {
 			'https://app.asana.com/-/oauth_token',
 			{
 				grant_type: req.body.grant_type,
-				client_id: '1203572903884176',
-				client_secret: 'a9f03092d64963d6d3a9333e5c5690ec',
-				redirect_uri: 'http://localhost:3000/oauth/callback',
+				client_id: process.env.OAUTH_CLIENT_ID,
+				client_secret: process.env.OAUTH_CLIENT_SECRET,
+				redirect_uri: process.env.OAUTH_REDIRECT_URI,
 				code: req.body.code,
 				refresh_token: req.body.refresh_token,
 			},
@@ -54,8 +64,8 @@ app.post('/oauth_revoke', async (req, res) => {
 		.post(
 			'https://app.asana.com/-/oauth_revoke',
 			{
-				client_id: '1203572903884176',
-				client_secret: 'a9f03092d64963d6d3a9333e5c5690ec',
+				client_id: process.env.OAUTH_CLIENT_ID,
+				client_secret: process.env.OAUTH_CLIENT_SECRET,
 				token: req.body.token,
 			},
 			{
@@ -73,6 +83,10 @@ app.post('/oauth_revoke', async (req, res) => {
 		})
 })
 
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname+'/client/build/index.html'))
+})
+
 app.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`)
+	console.log(`OAuth handler listening at http://localhost:${port}`)
 })

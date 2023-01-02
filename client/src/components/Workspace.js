@@ -1,6 +1,6 @@
 import React from 'react'
-import RadioList from './RadioList'
-import Button from './Button'
+import RadioList from './RadioList.js'
+import Button from './Button.js'
 import { useUsersMe } from '../hooks/asana/useUsersMe.js'
 import { useRadio } from '../reducers/useRadio.js'
 
