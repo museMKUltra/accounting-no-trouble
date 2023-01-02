@@ -14,7 +14,7 @@ function Grant() {
 
 	return (
 		<div>
-			<a href="http://localhost:3030/oauth_authorize">
+			<a href="/oauth_authorize">
 				Authenticate with Asana
 			</a>
 		</div>
