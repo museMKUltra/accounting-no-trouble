@@ -6,6 +6,7 @@ function Home() {
 	const navigate = useNavigate()
 	const { user } = useContext(ClientContext)
 	const [isRevoking, setIsRevoking] = useState(false)
+	const isDisabled = isRevoking || user.isFetching
 
 	const logout = () => {
 		localStorage.removeItem('access_token')
@@ -46,10 +47,10 @@ function Home() {
 					? 'fetching...'
 					: `hi, ${user.name}`}
 			</div>
-			<button disabled={isRevoking} type="button" onClick={logout}>
+			<button disabled={isDisabled} type="button" onClick={logout}>
 				logout
 			</button>
-			<button disabled={isRevoking} type="button" onClick={revoke}>
+			<button disabled={isDisabled} type="button" onClick={revoke}>
 				revoke
 			</button>
 		</>
