@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function Grant() {
 	const navigate = useNavigate()
+	const [isGranting, setIsGranting] = useState(false)
 
 	useEffect(() => {
 		const accessToken = localStorage.getItem('access_token')
@@ -12,7 +13,8 @@ function Grant() {
 		}
 	}, [])
 
-	const click = () => {
+	const login = () => {
+		setIsGranting(true)
 		fetch('/oauth_authorize')
 			.then(response => response.text())
 			.then(url => {
@@ -20,13 +22,17 @@ function Grant() {
 			})
 			.catch(e => {
 				alert(e)
+				setIsGranting(false)
 			})
 	}
 
 	return (
-		<button type="button" onClick={click}>
-			Authenticate with Asana
-		</button>
+		<>
+			<div>{isGranting ? 'granting...' : 'Authenticate with Asana'}</div>
+			<button disabled={isGranting} type="button" onClick={login}>
+				login
+			</button>
+		</>
 	)
 }
 
