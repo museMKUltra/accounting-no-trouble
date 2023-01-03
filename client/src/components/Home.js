@@ -1,10 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ClientContext } from '../contexts/ClientContext.js'
 
 function Home() {
 	const navigate = useNavigate()
 	const { user } = useContext(ClientContext)
+	const [isRevoking, setIsRevoking] = useState(false)
 
 	const logout = () => {
 		localStorage.removeItem('access_token')
@@ -15,6 +16,8 @@ function Home() {
 
 	const revoke = () => {
 		const refreshToken = localStorage.getItem('refresh_token')
+
+		setIsRevoking(true)
 
 		fetch('/oauth_revoke', {
 			method: 'POST',
@@ -29,17 +32,24 @@ function Home() {
 			.catch(e => {
 				alert(e)
 			})
+			.finally(() => {
+				setIsRevoking(false)
+			})
 	}
 
 	return (
 		<>
-			<div>{user.gid}</div>
-			<div>{user.name}</div>
-			<div>{user.email}</div>
-			<button type="button" onClick={logout}>
+			<div>
+				{isRevoking
+					? 'revoking...'
+					: user.isFetching
+					? 'fetching...'
+					: `hi, ${user.name}`}
+			</div>
+			<button disabled={isRevoking} type="button" onClick={logout}>
 				logout
 			</button>
-			<button type="button" onClick={revoke}>
+			<button disabled={isRevoking} type="button" onClick={revoke}>
 				revoke
 			</button>
 		</>
