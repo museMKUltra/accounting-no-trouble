@@ -18,12 +18,15 @@ function Authorization({ children }) {
 
 		const fetchMe = async () => {
 			try {
+				setUser({ isFetching: true })
+
 				const client = asana.Client.create().useAccessToken(accessToken)
 				const { gid = '', email = '', name = '' } = await client.users.me()
 
-				setUser({ gid, email, name })
+				setUser({ gid, email, name, isFetching: false })
 				setClient(client)
 			} catch (e) {
+				setUser({ isFetching: false })
 				alert(e)
 				localStorage.removeItem('access_token')
 				if (refreshToken) {
