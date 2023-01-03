@@ -12,12 +12,21 @@ function Grant() {
 		}
 	}, [])
 
+	const click = () => {
+		fetch('/oauth_authorize')
+			.then(response => response.text())
+			.then(url => {
+				window.location.href = url
+			})
+			.catch(e => {
+				alert(e)
+			})
+	}
+
 	return (
-		<div>
-			<a href="/oauth_authorize">
-				Authenticate with Asana
-			</a>
-		</div>
+		<button type="button" onClick={click}>
+			Authenticate with Asana
+		</button>
 	)
 }
 
