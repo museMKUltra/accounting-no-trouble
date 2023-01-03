@@ -29,7 +29,7 @@ app.get('/oauth_authorize', (req, res) => {
 	}
 
 	url.search = new URLSearchParams(searchParams)
-	res.redirect(url)
+	res.send(url.toString())
 })
 
 app.post('/oauth_token', async (req, res) => {
