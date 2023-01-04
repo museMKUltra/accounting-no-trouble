@@ -28,57 +28,56 @@ function Board() {
 		useProportion()
 
 	return (
-		<>
-			<nav
-				style={{
-					display: 'flex',
-					direction: 'revert',
-					justifyContent: 'right',
-				}}
-			>
-				<NavLink
-					to="/demo"
-					style={({ isActive }) => ({
-						color: isActive ? 'grey' : 'inherit',
-					})}
-				>
-					Demo
-				</NavLink>
-			</nav>
-			<GidContext.Provider
+		<GidContext.Provider
+			value={{
+				workspaceGid,
+				projectGid,
+				customFieldGids,
+				assigneeGid,
+			}}
+		>
+			<DatelineContext.Provider
 				value={{
-					workspaceGid,
-					projectGid,
-					customFieldGids,
-					assigneeGid,
+					dateline,
+					proposeStartOn,
+					proposeDueOn,
 				}}
 			>
-				<DatelineContext.Provider
+				<ProportionContext.Provider
 					value={{
-						dateline,
-						proposeStartOn,
-						proposeDueOn,
+						accountingTasks,
+						appendAccountingTask,
+						deleteAccountingTask,
 					}}
 				>
-					<ProportionContext.Provider
-						value={{
-							accountingTasks,
-							appendAccountingTask,
-							deleteAccountingTask,
+					<div
+						style={{
+							display: 'flex',
+							justifyContent: 'space-between',
 						}}
 					>
 						<h1>Board</h1>
-						{isUsersMeFetching || isSectionsFetching ? (
-							<p>fetching...</p>
-						) : (
-							sectionList.map(section => (
-								<BoardSection key={section.key} section={section} />
-							))
-						)}
-					</ProportionContext.Provider>
-				</DatelineContext.Provider>
-			</GidContext.Provider>
-		</>
+						<nav>
+							<NavLink
+								to="/"
+								style={({ isActive }) => ({
+									color: isActive ? 'grey' : 'inherit',
+								})}
+							>
+								Home
+							</NavLink>
+						</nav>
+					</div>
+					{isUsersMeFetching || isSectionsFetching ? (
+						<p>fetching...</p>
+					) : (
+						sectionList.map(section => (
+							<BoardSection key={section.key} section={section} />
+						))
+					)}
+				</ProportionContext.Provider>
+			</DatelineContext.Provider>
+		</GidContext.Provider>
 	)
 }
 

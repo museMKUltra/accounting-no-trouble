@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { ClientContext } from '../contexts/ClientContext.js'
 
 function Home() {
@@ -39,21 +39,31 @@ function Home() {
 	}
 
 	return (
-		<>
+		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 			<div>
-				{isRevoking
-					? 'revoking...'
-					: user.isFetching
-					? 'fetching...'
-					: `hi, ${user.name}`}
+				<div>
+					{isRevoking
+						? 'revoking...'
+						: user.isFetching
+						? 'fetching...'
+						: `hi, ${user.name}`}
+				</div>
+				<button disabled={isDisabled} type="button" onClick={logout}>
+					logout
+				</button>
+				<button disabled={isDisabled} type="button" onClick={revoke}>
+					revoke
+				</button>
 			</div>
-			<button disabled={isDisabled} type="button" onClick={logout}>
-				logout
-			</button>
-			<button disabled={isDisabled} type="button" onClick={revoke}>
-				revoke
-			</button>
-		</>
+			<NavLink
+				to="/board"
+				style={({ isActive }) => ({
+					color: isActive ? 'grey' : 'inherit',
+				})}
+			>
+				Board
+			</NavLink>
+		</div>
 	)
 }
 
