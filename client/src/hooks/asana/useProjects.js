@@ -1,9 +1,10 @@
-import { client } from './asana.js'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { ClientContext } from '../../contexts/ClientContext.js'
 
 export function useProjects({ workspaceGid }) {
 	const [projects, setProjects] = useState([])
 	const [isFetching, setIsFetching] = useState(false)
+	const { client } = useContext(ClientContext)
 
 	async function fetchProjects(workspace) {
 		try {
@@ -21,10 +22,10 @@ export function useProjects({ workspaceGid }) {
 	}
 
 	useEffect(() => {
-		if (!workspaceGid) return
+		if (!workspaceGid || !client) return
 
 		fetchProjects(workspaceGid)
-	}, [workspaceGid])
+	}, [workspaceGid, client])
 
 	return { isFetching, projects }
 }
