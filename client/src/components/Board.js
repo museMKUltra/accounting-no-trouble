@@ -8,10 +8,11 @@ import { GidContext } from '../contexts/GidContext.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 import { NavLink } from 'react-router-dom'
-
-const workspaceGid = process.env.REACT_APP_WORKSPACE_GID
-const projectGid = process.env.REACT_APP_PROJECT_GID
-const customFieldGids = [process.env.REACT_APP_CUSTOM_FIELD_GID]
+import {
+	WORKSPACE_GID as workspaceGid,
+	PROJECT_GID as projectGid,
+	CUSTOM_FIELD_GID as customFieldGid,
+} from '../configs/constent.js'
 
 function Board() {
 	const { isFetching: isUsersMeFetching, meGid: assigneeGid } = useUsersMe()
@@ -32,7 +33,7 @@ function Board() {
 			value={{
 				workspaceGid,
 				projectGid,
-				customFieldGids,
+				customFieldGids: [customFieldGid],
 				assigneeGid,
 			}}
 		>

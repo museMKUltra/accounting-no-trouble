@@ -20,8 +20,8 @@ import { formatProportion } from '../reducers/useProportion.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 import { ClientContext } from '../contexts/ClientContext.js'
+import { CUSTOM_FIELD_GID } from '../configs/constent.js'
 
-const CUSTOM_FIELD_GID = process.env.REACT_APP_CUSTOM_FIELD_GID
 const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
 
