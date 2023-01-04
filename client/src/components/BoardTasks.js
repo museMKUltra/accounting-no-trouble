@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import Button from './Button.js'
 import Checkbox from './Checkbox.js'
-import { updateAsanaTaskCustomField } from '../hooks/asana/asana.js'
 import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
 import { useCheckbox } from '../reducers/useCheckbox.js'
 import {
@@ -20,6 +19,7 @@ import {
 import { formatProportion } from '../reducers/useProportion.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
+import { ClientContext } from '../contexts/ClientContext.js'
 
 const CUSTOM_FIELD_GID = process.env.REACT_APP_CUSTOM_FIELD_GID
 const percentageFormatter = total => number =>
@@ -105,6 +105,19 @@ function BoardTasks({ tasks }) {
 		deleteAccountingTask(taskGid)
 		uncheckCheckbox(taskGid)
 	}
+
+	const { client } = useContext(ClientContext)
+	const updateAsanaTaskCustomField = useCallback(
+		async ({ taskGid, customFieldGid, customFieldValue }) => {
+			const response = await client.tasks.updateTask(taskGid, {
+				custom_fields: {
+					[customFieldGid]: customFieldValue,
+				},
+			})
+			return response
+		},
+		[client]
+	)
 
 	const submitSuggestiveProportion = async task => {
 		const { gid: taskGid, name: taskName } = task
