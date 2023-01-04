@@ -10,8 +10,22 @@ function App() {
 	return (
 		<div className="App">
 			<Routes>
-				<Route path="/demo/*" element={<Demo path={'/demo'} />} />
-				<Route path="/board" element={<Board />} />
+				<Route
+					path="/demo/*"
+					element={
+						<Authorization>
+							<Demo path={'/demo'} />
+						</Authorization>
+					}
+				/>
+				<Route
+					path="/board"
+					element={
+						<Authorization>
+							<Board />
+						</Authorization>
+					}
+				/>
 				<Route path="/oauth/*" element={<Oauth path={'/oauth'} />} />
 				<Route
 					path="/"

@@ -8,10 +8,11 @@ import { GidContext } from '../contexts/GidContext.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 import { NavLink } from 'react-router-dom'
-
-const workspaceGid = process.env.REACT_APP_WORKSPACE_GID
-const projectGid = process.env.REACT_APP_PROJECT_GID
-const customFieldGids = [process.env.REACT_APP_CUSTOM_FIELD_GID]
+import {
+	WORKSPACE_GID as workspaceGid,
+	PROJECT_GID as projectGid,
+	CUSTOM_FIELD_GID as customFieldGid,
+} from '../configs/constent.js'
 
 function Board() {
 	const { isFetching: isUsersMeFetching, meGid: assigneeGid } = useUsersMe()
@@ -28,57 +29,56 @@ function Board() {
 		useProportion()
 
 	return (
-		<>
-			<nav
-				style={{
-					display: 'flex',
-					direction: 'revert',
-					justifyContent: 'right',
-				}}
-			>
-				<NavLink
-					to="/demo"
-					style={({ isActive }) => ({
-						color: isActive ? 'grey' : 'inherit',
-					})}
-				>
-					Demo
-				</NavLink>
-			</nav>
-			<GidContext.Provider
+		<GidContext.Provider
+			value={{
+				workspaceGid,
+				projectGid,
+				customFieldGids: [customFieldGid],
+				assigneeGid,
+			}}
+		>
+			<DatelineContext.Provider
 				value={{
-					workspaceGid,
-					projectGid,
-					customFieldGids,
-					assigneeGid,
+					dateline,
+					proposeStartOn,
+					proposeDueOn,
 				}}
 			>
-				<DatelineContext.Provider
+				<ProportionContext.Provider
 					value={{
-						dateline,
-						proposeStartOn,
-						proposeDueOn,
+						accountingTasks,
+						appendAccountingTask,
+						deleteAccountingTask,
 					}}
 				>
-					<ProportionContext.Provider
-						value={{
-							accountingTasks,
-							appendAccountingTask,
-							deleteAccountingTask,
+					<div
+						style={{
+							display: 'flex',
+							justifyContent: 'space-between',
 						}}
 					>
 						<h1>Board</h1>
-						{isUsersMeFetching || isSectionsFetching ? (
-							<p>fetching...</p>
-						) : (
-							sectionList.map(section => (
-								<BoardSection key={section.key} section={section} />
-							))
-						)}
-					</ProportionContext.Provider>
-				</DatelineContext.Provider>
-			</GidContext.Provider>
-		</>
+						<nav>
+							<NavLink
+								to="/"
+								style={({ isActive }) => ({
+									color: isActive ? 'grey' : 'inherit',
+								})}
+							>
+								Home
+							</NavLink>
+						</nav>
+					</div>
+					{isUsersMeFetching || isSectionsFetching ? (
+						<p>fetching...</p>
+					) : (
+						sectionList.map(section => (
+							<BoardSection key={section.key} section={section} />
+						))
+					)}
+				</ProportionContext.Provider>
+			</DatelineContext.Provider>
+		</GidContext.Provider>
 	)
 }
 

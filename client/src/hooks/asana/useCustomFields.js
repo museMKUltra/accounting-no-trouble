@@ -1,9 +1,10 @@
-import { client } from './asana.js'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { ClientContext } from '../../contexts/ClientContext.js'
 
 export function useCustomFields({ projectGid }) {
 	const [customFields, setCustomFields] = useState([])
 	const [isFetching, setIsFetching] = useState(false)
+	const { client } = useContext(ClientContext)
 
 	async function fetchCustomFields(project) {
 		try {
@@ -27,10 +28,10 @@ export function useCustomFields({ projectGid }) {
 	}
 
 	useEffect(() => {
-		if (!projectGid) return
+		if (!projectGid || !client) return
 
 		fetchCustomFields(projectGid)
-	}, [projectGid])
+	}, [projectGid, client])
 
 	return { isFetching, customFields }
 }

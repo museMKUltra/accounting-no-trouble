@@ -1,9 +1,10 @@
-import { client } from './asana.js'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { ClientContext } from '../../contexts/ClientContext.js'
 
 export function useDetailTasks({ taskGids }) {
 	const [detailTasks, setDetailTasks] = useState([])
 	const [isFetching, setIsFetching] = useState(false)
+	const { client } = useContext(ClientContext)
 
 	async function fetchDetailTasks(tasks) {
 		try {
@@ -20,10 +21,10 @@ export function useDetailTasks({ taskGids }) {
 	}
 
 	useEffect(() => {
-		if (taskGids.length === 0) return
+		if (taskGids.length === 0 || !client) return
 
 		fetchDetailTasks(taskGids)
-	}, [taskGids])
+	}, [taskGids, client])
 
 	return { isFetching, detailTasks }
 }

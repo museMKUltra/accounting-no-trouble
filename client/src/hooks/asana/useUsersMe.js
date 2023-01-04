@@ -1,10 +1,11 @@
-import { client } from './asana.js'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { ClientContext } from '../../contexts/ClientContext.js'
 
 export function useUsersMe() {
 	const [workspaces, setWorkspaces] = useState([])
 	const [meGid, setMeGid] = useState('')
 	const [isFetching, setIsFetching] = useState(false)
+	const { client } = useContext(ClientContext)
 
 	async function fetchUsersMe() {
 		try {
@@ -21,8 +22,10 @@ export function useUsersMe() {
 	}
 
 	useEffect(() => {
+		if (!client) return
+
 		fetchUsersMe()
-	}, [])
+	}, [client])
 
 	return { isFetching, meGid, workspaces }
 }
