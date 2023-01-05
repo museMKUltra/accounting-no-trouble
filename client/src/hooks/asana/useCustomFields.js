@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { ClientContext } from '../../contexts/ClientContext.js'
 
 export function useCustomFields({ projectGid }) {
@@ -6,32 +6,35 @@ export function useCustomFields({ projectGid }) {
 	const [isFetching, setIsFetching] = useState(false)
 	const { client } = useContext(ClientContext)
 
-	async function fetchCustomFields(project) {
-		try {
-			setIsFetching(true)
-			const { data: customFieldSettings = [] } =
-				await client.customFieldSettings.getCustomFieldSettingsForProject(
-					project,
-					{}
-				)
+	const fetchCustomFields = useCallback(
+		async project => {
+			try {
+				setIsFetching(true)
+				const { data: customFieldSettings = [] } =
+					await client.customFieldSettings.getCustomFieldSettingsForProject(
+						project,
+						{}
+					)
 
-			setCustomFields(
-				customFieldSettings.map(
-					customFieldSetting => customFieldSetting.custom_field
+				setCustomFields(
+					customFieldSettings.map(
+						customFieldSetting => customFieldSetting.custom_field
+					)
 				)
-			)
-		} catch (e) {
-			console.error(e)
-		} finally {
-			setIsFetching(false)
-		}
-	}
+			} catch (e) {
+				console.error(e)
+			} finally {
+				setIsFetching(false)
+			}
+		},
+		[client]
+	)
 
 	useEffect(() => {
-		if (!projectGid || !client) return
+		if (!projectGid) return
 
 		fetchCustomFields(projectGid)
-	}, [projectGid, client])
+	}, [projectGid])
 
 	return { isFetching, customFields }
 }

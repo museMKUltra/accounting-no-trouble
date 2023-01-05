@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { ClientContext } from '../../contexts/ClientContext.js'
 
 export function useProjects({ workspaceGid }) {
@@ -6,26 +6,29 @@ export function useProjects({ workspaceGid }) {
 	const [isFetching, setIsFetching] = useState(false)
 	const { client } = useContext(ClientContext)
 
-	async function fetchProjects(workspace) {
-		try {
-			setIsFetching(true)
-			const { data: projects = [] } = await client.projects.getProjects({
-				workspace,
-			})
+	const fetchProjects = useCallback(
+		async workspace => {
+			try {
+				setIsFetching(true)
+				const { data: projects = [] } = await client.projects.getProjects({
+					workspace,
+				})
 
-			setProjects(projects)
-		} catch (e) {
-			console.error(e)
-		} finally {
-			setIsFetching(false)
-		}
-	}
+				setProjects(projects)
+			} catch (e) {
+				console.error(e)
+			} finally {
+				setIsFetching(false)
+			}
+		},
+		[client]
+	)
 
 	useEffect(() => {
-		if (!workspaceGid || !client) return
+		if (!workspaceGid) return
 
 		fetchProjects(workspaceGid)
-	}, [workspaceGid, client])
+	}, [workspaceGid])
 
 	return { isFetching, projects }
 }
