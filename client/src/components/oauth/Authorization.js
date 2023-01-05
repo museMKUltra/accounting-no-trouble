@@ -10,7 +10,7 @@ function Authorization({ children }) {
 	const isUserSet = useRef(false)
 
 	const fetchOauthToken = async () => {
-		fetch('/oauth_token', {
+		await fetch('/oauth_token', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
