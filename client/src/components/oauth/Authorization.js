@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import asana from 'asana'
 import { ClientContext } from '../../contexts/ClientContext.js'
@@ -7,6 +7,7 @@ function Authorization({ children }) {
 	const navigate = useNavigate()
 	const [client, setClient] = useState(null)
 	const [user, setUser] = useState({})
+	const isUserSet = useRef(false)
 
 	const fetchOauthToken = async () => {
 		fetch('/oauth_token', {
@@ -62,9 +63,10 @@ function Authorization({ children }) {
 	}, [])
 
 	useEffect(() => {
-		if (!client) return
+		if (!client || isUserSet.current) return
 
 		fetchMe()
+		isUserSet.current = true
 	}, [client])
 
 	return (
