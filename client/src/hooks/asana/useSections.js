@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { ClientContext } from '../../contexts/ClientContext.js'
 
 export function useSections({ projectGid }) {
@@ -6,25 +6,28 @@ export function useSections({ projectGid }) {
 	const [isFetching, setIsFetching] = useState(false)
 	const { client } = useContext(ClientContext)
 
-	async function fetchSections(project) {
-		try {
-			setIsFetching(true)
-			const { data: sections = [] } =
-				await client.sections.getSectionsForProject(project, {})
+	const fetchSections = useCallback(
+		async project => {
+			try {
+				setIsFetching(true)
+				const { data: sections = [] } =
+					await client.sections.getSectionsForProject(project, {})
 
-			setSections(sections)
-		} catch (e) {
-			console.error(e)
-		} finally {
-			setIsFetching(false)
-		}
-	}
+				setSections(sections)
+			} catch (e) {
+				console.error(e)
+			} finally {
+				setIsFetching(false)
+			}
+		},
+		[client]
+	)
 
 	useEffect(() => {
-		if (!projectGid || !client) return
+		if (!projectGid) return
 
 		fetchSections(projectGid)
-	}, [projectGid, client])
+	}, [projectGid])
 
 	return { isFetching, sections }
 }

@@ -106,7 +106,7 @@ function BoardTasks({ tasks }) {
 		uncheckCheckbox(taskGid)
 	}
 
-	const { client } = useContext(ClientContext)
+	const { client, fetchOauthToken } = useContext(ClientContext)
 	const updateAsanaTaskCustomField = useCallback(
 		async ({ taskGid, customFieldGid, customFieldValue }) => {
 			const response = await client.tasks.updateTask(taskGid, {
@@ -130,6 +130,11 @@ function BoardTasks({ tasks }) {
 			)
 		}
 
+		const handleRefreshToken = async () => {
+			await fetchOauthToken()
+			submitSuggestiveProportion(task)
+		}
+
 		try {
 			updateButtonLoading(true)
 			const suggestiveProportion = getSuggestiveProportion(taskGid)
@@ -150,11 +155,14 @@ function BoardTasks({ tasks }) {
 					return task
 				})
 			)
-		} catch (e) {
-			alert(`update "${taskName}" unsuccessfully`)
-			console.error(e)
-		} finally {
 			updateButtonLoading(false)
+		} catch (e) {
+			if (e.status === 401) {
+				handleRefreshToken()
+			} else {
+				console.error(e)
+				updateButtonLoading(false)
+			}
 		}
 	}
 

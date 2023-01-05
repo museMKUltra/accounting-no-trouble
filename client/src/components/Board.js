@@ -1,5 +1,4 @@
-import React from 'react'
-import { useUsersMe } from '../hooks/asana/useUsersMe.js'
+import React, { useContext } from 'react'
 import BoardSection from './BoardSection.js'
 import { useSections } from '../hooks/asana/useSections.js'
 import { useDateline } from '../reducers/useDateline.js'
@@ -13,9 +12,10 @@ import {
 	PROJECT_GID as projectGid,
 	CUSTOM_FIELD_GID as customFieldGid,
 } from '../configs/constent.js'
+import { ClientContext } from '../contexts/ClientContext.js'
 
 function Board() {
-	const { isFetching: isUsersMeFetching, meGid: assigneeGid } = useUsersMe()
+	const { user } = useContext(ClientContext)
 	const { isFetching: isSectionsFetching, sections } = useSections({
 		projectGid,
 	})
@@ -34,7 +34,7 @@ function Board() {
 				workspaceGid,
 				projectGid,
 				customFieldGids: [customFieldGid],
-				assigneeGid,
+				assigneeGid: user.gid,
 			}}
 		>
 			<DatelineContext.Provider
@@ -69,7 +69,7 @@ function Board() {
 							</NavLink>
 						</nav>
 					</div>
-					{isUsersMeFetching || isSectionsFetching ? (
+					{user.isFetching || isSectionsFetching ? (
 						<p>fetching...</p>
 					) : (
 						sectionList.map(section => (

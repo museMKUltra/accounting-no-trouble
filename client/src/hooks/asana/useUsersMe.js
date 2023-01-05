@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { ClientContext } from '../../contexts/ClientContext.js'
 
 export function useUsersMe() {
@@ -7,7 +7,7 @@ export function useUsersMe() {
 	const [isFetching, setIsFetching] = useState(false)
 	const { client } = useContext(ClientContext)
 
-	async function fetchUsersMe() {
+	const fetchUsersMe = useCallback(async () => {
 		try {
 			setIsFetching(true)
 			const { gid = '', workspaces = [] } = await client.users.me()
@@ -19,13 +19,11 @@ export function useUsersMe() {
 		} finally {
 			setIsFetching(false)
 		}
-	}
+	}, [client])
 
 	useEffect(() => {
-		if (!client) return
-
 		fetchUsersMe()
-	}, [client])
+	}, [])
 
 	return { isFetching, meGid, workspaces }
 }
