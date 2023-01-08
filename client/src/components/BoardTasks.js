@@ -3,6 +3,7 @@ import React, {
 	useContext,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 } from 'react'
 import Button from './Button.js'
@@ -106,6 +107,9 @@ function BoardTasks({ tasks }) {
 		uncheckCheckbox(taskGid)
 	}
 
+	const isSuspending = useRef(false)
+	const [suspendedTask, setSuspendedTask] = useState(null)
+	const [waitingTasks, setWaitingTasks] = useState([])
 	const { client, refreshAccessToken } = useContext(ClientContext)
 	const updateAsanaTaskCustomField = useCallback(
 		async ({ taskGid, customFieldGid, customFieldValue }) => {
@@ -128,11 +132,6 @@ function BoardTasks({ tasks }) {
 					isLoading: button.taskGid === taskGid ? isLoading : button.isLoading,
 				}))
 			)
-		}
-
-		const handleRefreshToken = async () => {
-			await refreshAccessToken()
-			submitSuggestiveProportion(task)
 		}
 
 		try {
@@ -158,13 +157,34 @@ function BoardTasks({ tasks }) {
 			updateButtonLoading(false)
 		} catch (e) {
 			if (e.status === 401) {
-				handleRefreshToken()
+				if (isSuspending.current) {
+					setWaitingTasks(waitingTasks => [...waitingTasks, task])
+					return
+				}
+				isSuspending.current = true
+				await refreshAccessToken()
+				setSuspendedTask(task)
 			} else {
 				console.error(e)
 				updateButtonLoading(false)
 			}
 		}
 	}
+
+	useEffect(() => {
+		const handleRefreshing = async () => {
+			await submitSuggestiveProportion(suspendedTask)
+			setSuspendedTask(null)
+			isSuspending.current = false
+		}
+
+		if (suspendedTask) {
+			handleRefreshing()
+		} else if (waitingTasks.length > 0) {
+			waitingTasks.forEach(task => submitSuggestiveProportion(task))
+			setWaitingTasks([])
+		}
+	}, [suspendedTask])
 
 	return (
 		<>
