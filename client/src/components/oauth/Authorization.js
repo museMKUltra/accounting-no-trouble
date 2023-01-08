@@ -30,7 +30,7 @@ function Authorization({ children }) {
 		navigate('/oauth/grant')
 	}
 
-	const fetchOauthToken = async () => {
+	const refreshAccessToken = async () => {
 		try {
 			const { accessToken } = await fetchOauthTokenByRefreshToken(refreshToken)
 			if (!accessToken) {
@@ -57,7 +57,7 @@ function Authorization({ children }) {
 			setUser({ gid, name, email, isFetching: false })
 		} catch (error) {
 			if (error.status === 401) {
-				navigate('/oauth/refresh')
+				refreshAccessToken()
 				return
 			}
 
@@ -85,7 +85,9 @@ function Authorization({ children }) {
 	}, [accessToken])
 
 	return (
-		<ClientContext.Provider value={{ client, user, fetchOauthToken, logout }}>
+		<ClientContext.Provider
+			value={{ client, user, refreshAccessToken, logout }}
+		>
 			{children}
 		</ClientContext.Provider>
 	)

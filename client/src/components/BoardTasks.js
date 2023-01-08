@@ -106,7 +106,7 @@ function BoardTasks({ tasks }) {
 		uncheckCheckbox(taskGid)
 	}
 
-	const { client, fetchOauthToken } = useContext(ClientContext)
+	const { client, refreshAccessToken } = useContext(ClientContext)
 	const updateAsanaTaskCustomField = useCallback(
 		async ({ taskGid, customFieldGid, customFieldValue }) => {
 			const response = await client.tasks.updateTask(taskGid, {
@@ -131,7 +131,7 @@ function BoardTasks({ tasks }) {
 		}
 
 		const handleRefreshToken = async () => {
-			await fetchOauthToken()
+			await refreshAccessToken()
 			submitSuggestiveProportion(task)
 		}
 
