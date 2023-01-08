@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchOauthAuthorize } from '../../hooks/oauth/oauth.js'
+import { useClient } from '../../reducers/useClient.js'
 
 function Grant() {
 	const navigate = useNavigate()
 	const [isGranting, setIsGranting] = useState(false)
+	const { accessToken } = useClient()
 
 	useEffect(() => {
-		const accessToken = localStorage.getItem('access_token')
-
 		if (accessToken) {
 			navigate('/')
 		}
