@@ -24,7 +24,7 @@ const reducer = (state, action) => {
 			const { accessToken, refreshToken } = action
 
 			localStorage.setItem('access_token', accessToken)
-			localStorage.setItem('access_token', refreshToken)
+			localStorage.setItem('refresh_token', refreshToken)
 			state.client.useAccessToken(accessToken)
 			state.accessToken = accessToken
 			state.refreshToken = refreshToken
@@ -34,7 +34,6 @@ const reducer = (state, action) => {
 			}
 		}
 		case 'reset': {
-			console.log('reset')
 			localStorage.removeItem('access_token')
 			localStorage.removeItem('refresh_token')
 			state.client.useAccessToken(null)
