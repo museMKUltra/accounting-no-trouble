@@ -4,9 +4,8 @@ import { ClientContext } from '../contexts/ClientContext.js'
 import { fetchOauthRevoke } from '../hooks/oauth/oauth.js'
 
 function Home() {
-	const { user, resetClient } = useContext(ClientContext)
+	const { refreshToken, user, resetClient } = useContext(ClientContext)
 	const [isRevoking, setIsRevoking] = useState(false)
-	const isDisabled = isRevoking || user.isFetching
 
 	const revoke = async () => {
 		try {
@@ -23,17 +22,11 @@ function Home() {
 	return (
 		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 			<div>
-				<div>
-					{isRevoking
-						? 'revoking...'
-						: user.isFetching
-						? 'fetching...'
-						: `hi, ${user.name}`}
-				</div>
-				<button disabled={isDisabled} type="button" onClick={resetClient}>
+				<div>{isRevoking ? 'revoking...' : `hi, ${user.name}`}</div>
+				<button disabled={isRevoking} type="button" onClick={resetClient}>
 					logout
 				</button>
-				<button disabled={isDisabled} type="button" onClick={revoke}>
+				<button disabled={isRevoking} type="button" onClick={revoke}>
 					revoke
 				</button>
 			</div>
