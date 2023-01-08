@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { ClientContext } from '../contexts/ClientContext.js'
 
 function Home() {
-	const { user, logout } = useContext(ClientContext)
+	const { user, resetClient } = useContext(ClientContext)
 	const [isRevoking, setIsRevoking] = useState(false)
 	const isDisabled = isRevoking || user.isFetching
 
@@ -21,7 +21,7 @@ function Home() {
 				token: refreshToken,
 			}),
 		})
-			.then(logout)
+			.then(resetClient)
 			.catch(e => {
 				alert(e)
 			})
@@ -40,7 +40,7 @@ function Home() {
 						? 'fetching...'
 						: `hi, ${user.name}`}
 				</div>
-				<button disabled={isDisabled} type="button" onClick={logout}>
+				<button disabled={isDisabled} type="button" onClick={resetClient}>
 					logout
 				</button>
 				<button disabled={isDisabled} type="button" onClick={revoke}>

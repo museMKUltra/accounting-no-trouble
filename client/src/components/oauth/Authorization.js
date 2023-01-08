@@ -1,18 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import asana from 'asana'
 import { ClientContext } from '../../contexts/ClientContext.js'
 import { fetchOauthTokenByRefreshToken } from '../../hooks/oauth/oauth.js'
+import { useClient } from '../../reducers/useClient.js'
 
 function Authorization({ children }) {
 	const navigate = useNavigate()
-	const [client] = useState(asana.Client.create())
-	const [accessToken, setAccessToken] = useState(
-		localStorage.getItem('access_token')
-	)
-	const [refreshToken, setRefreshToken] = useState(
-		localStorage.getItem('refresh_token')
-	)
 	const [user, setUser] = useState({
 		gid: '',
 		name: '',
@@ -20,15 +13,8 @@ function Authorization({ children }) {
 		isFetching: false,
 		isFetched: false,
 	})
-
-	const logout = () => {
-		localStorage.removeItem('access_token')
-		localStorage.removeItem('refresh_token')
-		setAccessToken(null)
-		setRefreshToken(null)
-
-		navigate('/oauth/grant')
-	}
+	const { client, accessToken, refreshToken, updateClient, resetClient } =
+		useClient()
 
 	const refreshAccessToken = async () => {
 		try {
@@ -37,12 +23,10 @@ function Authorization({ children }) {
 				throw new Error('fetching access token by refresh token is failed')
 			}
 
-			client.useAccessToken(accessToken)
-			localStorage.setItem('access_token', accessToken)
-			setAccessToken(accessToken)
+			updateClient({ accessToken })
 		} catch (error) {
 			alert(error)
-			logout()
+			resetClient()
 		}
 	}
 
@@ -62,31 +46,22 @@ function Authorization({ children }) {
 			}
 
 			alert(error)
-			logout()
+			resetClient()
 		}
 	}, [client])
 
 	useEffect(() => {
-		if (!client) return
-
 		if (!accessToken) {
-			logout()
+			navigate('/oauth/grant')
 			return
 		}
-
-		client.useAccessToken(accessToken)
-		setAccessToken(accessToken)
-	}, [])
-
-	useEffect(() => {
-		if (!accessToken) return
 
 		fetchMe()
 	}, [accessToken])
 
 	return (
 		<ClientContext.Provider
-			value={{ client, user, refreshAccessToken, logout }}
+			value={{ client, user, refreshAccessToken, resetClient }}
 		>
 			{children}
 		</ClientContext.Provider>
