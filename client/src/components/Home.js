@@ -1,19 +1,11 @@
 import React, { useContext, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { ClientContext } from '../contexts/ClientContext.js'
 
 function Home() {
-	const navigate = useNavigate()
-	const { user } = useContext(ClientContext)
+	const { user, logout } = useContext(ClientContext)
 	const [isRevoking, setIsRevoking] = useState(false)
 	const isDisabled = isRevoking || user.isFetching
-
-	const logout = () => {
-		localStorage.removeItem('access_token')
-		localStorage.removeItem('refresh_token')
-
-		navigate('/oauth/grant')
-	}
 
 	const revoke = () => {
 		const refreshToken = localStorage.getItem('refresh_token')
