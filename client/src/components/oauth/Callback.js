@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { fetchOauthTokenByCode } from '../../hooks/oauth/oauth.js'
+import { useClient } from '../../reducers/useClient.js'
 
 function useQuery() {
 	const { search } = useLocation()
@@ -10,48 +12,39 @@ function useQuery() {
 function Callback() {
 	const query = useQuery()
 	const navigate = useNavigate()
+	const { accessToken, updateClient } = useClient()
 
 	useEffect(() => {
-		const code = query.get('code')
-
-		if (!code) {
-			return
-		}
-
 		const fetchOauthToken = async () => {
-			fetch('/oauth_token', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					code,
-					grant_type: 'authorization_code',
-				}),
-			})
-				.then(response => response.json())
-				.then(({ access_token, refresh_token }) => {
-					if (!access_token) {
-						throw new Error('did not fetch the access token')
-					}
+			try {
+				const code = query.get('code')
+				if (!code) {
+					throw new Error('query code does not exist')
+				}
 
-					if (!refresh_token) {
-						throw new Error('did not fetch the refresh token')
-					}
+				const { accessToken, refreshToken } = await fetchOauthTokenByCode(code)
+				if (!accessToken) {
+					throw new Error('fetching access token by code is failed')
+				}
+				if (!refreshToken) {
+					throw new Error('fetching refresh token by code is failed')
+				}
 
-					localStorage.setItem('access_token', access_token)
-					localStorage.setItem('refresh_token', refresh_token)
-
-					navigate('/')
-				})
-				.catch(e => {
-					alert(e)
-					navigate('/oauth/grant')
-				})
+				updateClient({ accessToken, refreshToken })
+			} catch (error) {
+				alert(error)
+				navigate('/oauth/grant')
+			}
 		}
 
 		fetchOauthToken()
 	}, [])
+
+	useEffect(() => {
+		if (accessToken) {
+			navigate('/')
+		}
+	}, [accessToken])
 
 	return <div>redirecting...</div>
 }

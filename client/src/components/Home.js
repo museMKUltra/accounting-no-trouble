@@ -1,57 +1,32 @@
 import React, { useContext, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { ClientContext } from '../contexts/ClientContext.js'
+import { fetchOauthRevoke } from '../hooks/oauth/oauth.js'
 
 function Home() {
-	const navigate = useNavigate()
-	const { user } = useContext(ClientContext)
+	const { refreshToken, user, resetClient } = useContext(ClientContext)
 	const [isRevoking, setIsRevoking] = useState(false)
-	const isDisabled = isRevoking || user.isFetching
 
-	const logout = () => {
-		localStorage.removeItem('access_token')
-		localStorage.removeItem('refresh_token')
-
-		navigate('/oauth/grant')
-	}
-
-	const revoke = () => {
-		const refreshToken = localStorage.getItem('refresh_token')
-
-		setIsRevoking(true)
-
-		fetch('/oauth_revoke', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				token: refreshToken,
-			}),
-		})
-			.then(logout)
-			.catch(e => {
-				alert(e)
-			})
-			.finally(() => {
-				setIsRevoking(false)
-			})
+	const revoke = async () => {
+		try {
+			setIsRevoking(true)
+			await fetchOauthRevoke(refreshToken)
+			resetClient()
+		} catch (error) {
+			alert(error)
+		} finally {
+			setIsRevoking(false)
+		}
 	}
 
 	return (
 		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 			<div>
-				<div>
-					{isRevoking
-						? 'revoking...'
-						: user.isFetching
-						? 'fetching...'
-						: `hi, ${user.name}`}
-				</div>
-				<button disabled={isDisabled} type="button" onClick={logout}>
+				<div>{isRevoking ? 'revoking...' : `hi, ${user.name}`}</div>
+				<button disabled={isRevoking} type="button" onClick={resetClient}>
 					logout
 				</button>
-				<button disabled={isDisabled} type="button" onClick={revoke}>
+				<button disabled={isRevoking} type="button" onClick={revoke}>
 					revoke
 				</button>
 			</div>
