@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { fetchOauthAuthorize } from '../../hooks/oauth/oauth.js'
 
 function Grant() {
 	const navigate = useNavigate()
@@ -13,17 +14,15 @@ function Grant() {
 		}
 	}, [])
 
-	const login = () => {
-		setIsGranting(true)
-		fetch('/oauth_authorize')
-			.then(response => response.text())
-			.then(url => {
-				window.location.href = url
-			})
-			.catch(e => {
-				alert(e)
-				setIsGranting(false)
-			})
+	const login = async () => {
+		try {
+			setIsGranting(true)
+			const url = await fetchOauthAuthorize()
+			window.location.href = url
+		} catch (error) {
+			alert(error)
+			setIsGranting(false)
+		}
 	}
 
 	return (
