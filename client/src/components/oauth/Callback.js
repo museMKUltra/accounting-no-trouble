@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchOauthTokenByCode } from '../../hooks/oauth/oauth.js'
+import { useClient } from '../../reducers/useClient.js'
 
 function useQuery() {
 	const { search } = useLocation()
@@ -11,19 +12,17 @@ function useQuery() {
 function Callback() {
 	const query = useQuery()
 	const navigate = useNavigate()
+	const { accessToken, updateClient } = useClient()
 
 	useEffect(() => {
-		const code = query.get('code')
-
-		if (!code) {
-			alert('code does not exist')
-			return
-		}
-
 		const fetchOauthToken = async () => {
 			try {
-				const { accessToken, refreshToken } = await fetchOauthTokenByCode(code)
+				const code = query.get('code')
+				if (!code) {
+					throw new Error('query code does not exist')
+				}
 
+				const { accessToken, refreshToken } = await fetchOauthTokenByCode(code)
 				if (!accessToken) {
 					throw new Error('fetching access token by code is failed')
 				}
@@ -31,10 +30,7 @@ function Callback() {
 					throw new Error('fetching refresh token by code is failed')
 				}
 
-				localStorage.setItem('access_token', accessToken)
-				localStorage.setItem('refresh_token', refreshToken)
-
-				navigate('/')
+				updateClient({ accessToken, refreshToken })
 			} catch (error) {
 				alert(error)
 				navigate('/oauth/grant')
@@ -43,6 +39,12 @@ function Callback() {
 
 		fetchOauthToken()
 	}, [])
+
+	useEffect(() => {
+		if (accessToken) {
+			navigate('/')
+		}
+	}, [accessToken])
 
 	return <div>redirecting...</div>
 }
