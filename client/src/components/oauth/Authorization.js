@@ -1,77 +1,92 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import asana from 'asana'
 import { ClientContext } from '../../contexts/ClientContext.js'
+import { fetchOauthTokenByRefreshToken } from '../../hooks/oauth/oauth.js'
 
 function Authorization({ children }) {
 	const navigate = useNavigate()
-	const [client, setClient] = useState(null)
-	const [user, setUser] = useState({})
-	const isUserSet = useRef(false)
+	const [client] = useState(asana.Client.create())
+	const [accessToken, setAccessToken] = useState(
+		localStorage.getItem('access_token')
+	)
+	const [refreshToken, setRefreshToken] = useState(
+		localStorage.getItem('refresh_token')
+	)
+	const [user, setUser] = useState({
+		gid: '',
+		name: '',
+		email: '',
+		isFetching: false,
+		isFetched: false,
+	})
+
+	const logout = () => {
+		localStorage.removeItem('access_token')
+		localStorage.removeItem('refresh_token')
+		setAccessToken(null)
+		setRefreshToken(null)
+
+		navigate('/oauth/grant')
+	}
 
 	const fetchOauthToken = async () => {
-		await fetch('/oauth_token', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				refresh_token: localStorage.getItem('refresh_token'),
-				grant_type: 'refresh_token',
-			}),
-		})
-			.then(response => response.json())
-			.then(({ access_token }) => {
-				if (!access_token) {
-					throw new Error('did not fetch the access token')
-				}
-				localStorage.setItem('access_token', access_token)
-				const client = asana.Client.create().useAccessToken(access_token)
-				setClient(client)
-			})
-			.catch(e => {
-				alert(e)
-			})
+		try {
+			const { accessToken } = await fetchOauthTokenByRefreshToken(refreshToken)
+			if (!accessToken) {
+				throw new Error('fetching access token by refresh token is failed')
+			}
+
+			client.useAccessToken(accessToken)
+			localStorage.setItem('access_token', accessToken)
+			setAccessToken(accessToken)
+		} catch (error) {
+			alert(error)
+			logout()
+		}
 	}
 
 	const fetchMe = useCallback(async () => {
 		try {
-			setUser({ isFetching: true })
-			const { gid = '', email = '', name = '' } = await client.users.me()
+			setUser({
+				...user,
+				isFetching: true,
+			})
 
-			setUser({ gid, email, name, isFetching: false })
-		} catch (e) {
-			alert(e)
-			if (localStorage.getItem('refresh_token')) {
+			const { gid = '', name = '', email = '' } = await client.users.me()
+			setUser({ gid, name, email, isFetching: false })
+		} catch (error) {
+			if (error.status === 401) {
 				navigate('/oauth/refresh')
-			} else {
-				navigate('/oauth/grant')
+				return
 			}
+
+			alert(error)
+			logout()
 		}
 	}, [client])
 
 	useEffect(() => {
-		const accessToken = localStorage.getItem('access_token')
+		if (!client) return
 
 		if (!accessToken) {
-			navigate('/oauth/grant')
+			logout()
 			return
 		}
 
-		const client = asana.Client.create().useAccessToken(accessToken)
-		setClient(client)
+		client.useAccessToken(accessToken)
+		setAccessToken(accessToken)
 	}, [])
 
 	useEffect(() => {
-		if (!client || isUserSet.current) return
+		if (!accessToken) return
 
 		fetchMe()
-		isUserSet.current = true
-	}, [client])
+	}, [accessToken])
 
 	return (
-		<ClientContext.Provider value={{ client, user, fetchOauthToken }}>
-			{client && children}
+		<ClientContext.Provider value={{ client, user, fetchOauthToken, logout }}>
+			{children}
 		</ClientContext.Provider>
 	)
 }
