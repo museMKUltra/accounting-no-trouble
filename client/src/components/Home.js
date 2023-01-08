@@ -1,33 +1,23 @@
 import React, { useContext, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ClientContext } from '../contexts/ClientContext.js'
+import { fetchOauthRevoke } from '../hooks/oauth/oauth.js'
 
 function Home() {
 	const { user, resetClient } = useContext(ClientContext)
 	const [isRevoking, setIsRevoking] = useState(false)
 	const isDisabled = isRevoking || user.isFetching
 
-	const revoke = () => {
-		const refreshToken = localStorage.getItem('refresh_token')
-
-		setIsRevoking(true)
-
-		fetch('/oauth_revoke', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				token: refreshToken,
-			}),
-		})
-			.then(resetClient)
-			.catch(e => {
-				alert(e)
-			})
-			.finally(() => {
-				setIsRevoking(false)
-			})
+	const revoke = async () => {
+		try {
+			setIsRevoking(true)
+			await fetchOauthRevoke(refreshToken)
+			resetClient()
+		} catch (error) {
+			alert(error)
+		} finally {
+			setIsRevoking(false)
+		}
 	}
 
 	return (
