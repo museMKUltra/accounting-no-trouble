@@ -13,7 +13,7 @@ export function useSections({ projectGid }) {
 					await refresh()
 					setTimeout(() => {
 						fetchSections(project)
-					}, 0)
+					})
 				},
 				error => {
 					console.error(error)

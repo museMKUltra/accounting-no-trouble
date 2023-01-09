@@ -44,7 +44,7 @@ function Authorization({ children }) {
 		const handleRefreshAccessToken = accessTokenRefresher(
 			async refresh => {
 				await refresh()
-				setTimeout(fetchMe, 0)
+				setTimeout(fetchMe)
 			},
 			error => {
 				alert(error)
