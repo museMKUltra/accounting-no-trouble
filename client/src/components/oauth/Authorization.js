@@ -32,10 +32,7 @@ function Authorization({ children }) {
 	const accessTokenRefresher = (resolve, reject) => async error => {
 		switch (error.status) {
 			case 401:
-				await refreshAccessToken()
-				setTimeout(() => {
-					resolve?.()
-				}, 0)
+				resolve?.(refreshAccessToken)
 				break
 			default:
 				reject?.(error)
@@ -45,8 +42,9 @@ function Authorization({ children }) {
 
 	const fetchMe = useCallback(async () => {
 		const handleRefreshAccessToken = accessTokenRefresher(
-			() => {
-				fetchMe()
+			async refresh => {
+				await refresh()
+				setTimeout(fetchMe, 0)
 			},
 			error => {
 				alert(error)

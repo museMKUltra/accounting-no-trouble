@@ -9,8 +9,11 @@ export function useSections({ projectGid }) {
 	const fetchSections = useCallback(
 		async project => {
 			const handleRefreshAccessToken = accessTokenRefresher(
-				() => {
-					fetchSections(project)
+				async refresh => {
+					await refresh()
+					setTimeout(() => {
+						fetchSections(project)
+					}, 0)
 				},
 				error => {
 					console.error(error)
