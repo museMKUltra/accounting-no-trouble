@@ -44,7 +44,7 @@ function Authorization({ children }) {
 	}
 
 	const fetchMe = useCallback(async () => {
-		const refreshAccessToken = accessTokenRefresher(
+		const handleRefreshAccessToken = accessTokenRefresher(
 			() => {
 				fetchMe()
 			},
@@ -61,7 +61,7 @@ function Authorization({ children }) {
 			const { gid = '', name = '', email = '' } = await client.users.me()
 			setUser({ gid, name, email, isFetched: true })
 		} catch (error) {
-			await refreshAccessToken(error)
+			await handleRefreshAccessToken(error)
 		}
 	}, [client])
 
@@ -76,7 +76,14 @@ function Authorization({ children }) {
 
 	return (
 		<ClientContext.Provider
-			value={{ client, refreshToken, user, refreshAccessToken, resetClient }}
+			value={{
+				client,
+				refreshToken,
+				user,
+				refreshAccessToken,
+				accessTokenRefresher,
+				resetClient,
+			}}
 		>
 			{user.isFetched ? children : 'fetching...'}
 		</ClientContext.Provider>
