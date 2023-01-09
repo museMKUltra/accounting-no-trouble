@@ -107,10 +107,8 @@ function BoardTasks({ tasks }) {
 		uncheckCheckbox(taskGid)
 	}
 
-	const isSuspending = useRef(false)
-	const [suspendedTask, setSuspendedTask] = useState(null)
-	const [waitingTasks, setWaitingTasks] = useState([])
-	const { client, refreshAccessToken } = useContext(ClientContext)
+	const suspendedTasks = useRef([])
+	const { client, accessTokenRefresher } = useContext(ClientContext)
 	const updateAsanaTaskCustomField = useCallback(
 		async ({ taskGid, customFieldGid, customFieldValue }) => {
 			const response = await client.tasks.updateTask(taskGid, {
@@ -133,6 +131,24 @@ function BoardTasks({ tasks }) {
 				}))
 			)
 		}
+		const handleRefreshAccessToken = accessTokenRefresher(
+			async refresh => {
+				if (suspendedTasks.current.length > 0) {
+					suspendedTasks.current.push(task)
+					return
+				}
+				suspendedTasks.current.push(task)
+				await refresh()
+				setTimeout(() => {
+					suspendedTasks.current.forEach(submitSuggestiveProportion)
+					suspendedTasks.current = []
+				})
+			},
+			error => {
+				console.error(error)
+				updateButtonLoading(false)
+			}
+		)
 
 		try {
 			updateButtonLoading(true)
@@ -155,36 +171,10 @@ function BoardTasks({ tasks }) {
 				})
 			)
 			updateButtonLoading(false)
-		} catch (e) {
-			if (e.status === 401) {
-				if (isSuspending.current) {
-					setWaitingTasks(waitingTasks => [...waitingTasks, task])
-					return
-				}
-				isSuspending.current = true
-				await refreshAccessToken()
-				setSuspendedTask(task)
-			} else {
-				console.error(e)
-				updateButtonLoading(false)
-			}
+		} catch (error) {
+			handleRefreshAccessToken(error)
 		}
 	}
-
-	useEffect(() => {
-		const handleRefreshing = async () => {
-			await submitSuggestiveProportion(suspendedTask)
-			setSuspendedTask(null)
-			isSuspending.current = false
-		}
-
-		if (suspendedTask) {
-			handleRefreshing()
-		} else if (waitingTasks.length > 0) {
-			waitingTasks.forEach(task => submitSuggestiveProportion(task))
-			setWaitingTasks([])
-		}
-	}, [suspendedTask])
 
 	return (
 		<>

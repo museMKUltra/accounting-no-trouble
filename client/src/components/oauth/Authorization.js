@@ -29,18 +29,37 @@ function Authorization({ children }) {
 		}
 	}
 
+	const accessTokenRefresher = (resolve, reject) => async error => {
+		switch (error.status) {
+			case 401:
+				resolve?.(refreshAccessToken)
+				break
+			default:
+				reject?.(error)
+				break
+		}
+	}
+
 	const fetchMe = useCallback(async () => {
+		const handleRefreshAccessToken = accessTokenRefresher(
+			async refresh => {
+				await refresh()
+				setTimeout(fetchMe)
+			},
+			error => {
+				alert(error)
+				resetClient()
+				setTimeout(() => {
+					navigate('/oauth/grant')
+				})
+			}
+		)
+
 		try {
 			const { gid = '', name = '', email = '' } = await client.users.me()
 			setUser({ gid, name, email, isFetched: true })
 		} catch (error) {
-			if (error.status === 401) {
-				refreshAccessToken()
-				return
-			}
-
-			alert(error)
-			resetClient()
+			await handleRefreshAccessToken(error)
 		}
 	}, [client])
 
@@ -51,11 +70,17 @@ function Authorization({ children }) {
 		}
 
 		fetchMe()
-	}, [accessToken])
+	}, [])
 
 	return (
 		<ClientContext.Provider
-			value={{ client, refreshToken, user, refreshAccessToken, resetClient }}
+			value={{
+				client,
+				refreshToken,
+				user,
+				accessTokenRefresher,
+				resetClient,
+			}}
 		>
 			{user.isFetched ? children : 'fetching...'}
 		</ClientContext.Provider>
