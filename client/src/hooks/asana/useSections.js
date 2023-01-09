@@ -4,18 +4,30 @@ import { ClientContext } from '../../contexts/ClientContext.js'
 export function useSections({ projectGid }) {
 	const [sections, setSections] = useState([])
 	const [isFetching, setIsFetching] = useState(false)
-	const { client } = useContext(ClientContext)
+	const { client, refreshAccessToken } = useContext(ClientContext)
 
 	const fetchSections = useCallback(
 		async project => {
+			const handleRefreshAccessToken = async error => {
+				switch (error.status) {
+					case 401:
+						await refreshAccessToken()
+						setTimeout(() => {
+							fetchSections(project)
+						}, 0)
+						break
+					default:
+						console.error(error)
+				}
+			}
+
 			try {
 				setIsFetching(true)
 				const { data: sections = [] } =
 					await client.sections.getSectionsForProject(project, {})
-
 				setSections(sections)
 			} catch (e) {
-				console.error(e)
+				await handleRefreshAccessToken(e)
 			} finally {
 				setIsFetching(false)
 			}
