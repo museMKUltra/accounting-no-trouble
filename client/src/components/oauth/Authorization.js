@@ -78,7 +78,6 @@ function Authorization({ children }) {
 				client,
 				refreshToken,
 				user,
-				refreshAccessToken,
 				accessTokenRefresher,
 				resetClient,
 			}}

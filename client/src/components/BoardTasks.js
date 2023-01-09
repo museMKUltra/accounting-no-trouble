@@ -108,7 +108,7 @@ function BoardTasks({ tasks }) {
 	}
 
 	const suspendedTasks = useRef([])
-	const { client, refreshAccessToken } = useContext(ClientContext)
+	const { client, accessTokenRefresher } = useContext(ClientContext)
 	const updateAsanaTaskCustomField = useCallback(
 		async ({ taskGid, customFieldGid, customFieldValue }) => {
 			const response = await client.tasks.updateTask(taskGid, {
@@ -131,6 +131,24 @@ function BoardTasks({ tasks }) {
 				}))
 			)
 		}
+		const handleRefreshAccessToken = accessTokenRefresher(
+			async refresh => {
+				if (suspendedTasks.current.length > 0) {
+					suspendedTasks.current.push(task)
+					return
+				}
+				suspendedTasks.current.push(task)
+				await refresh()
+				setTimeout(() => {
+					suspendedTasks.current.forEach(submitSuggestiveProportion)
+					suspendedTasks.current = []
+				})
+			},
+			error => {
+				console.error(error)
+				updateButtonLoading(false)
+			}
+		)
 
 		try {
 			updateButtonLoading(true)
@@ -153,22 +171,8 @@ function BoardTasks({ tasks }) {
 				})
 			)
 			updateButtonLoading(false)
-		} catch (e) {
-			if (e.status === 401) {
-				if (suspendedTasks.current.length > 0) {
-					suspendedTasks.current.push(task)
-					return
-				}
-				suspendedTasks.current.push(task)
-				await refreshAccessToken()
-				setTimeout(() => {
-					suspendedTasks.current.forEach(submitSuggestiveProportion)
-					suspendedTasks.current = []
-				})
-			} else {
-				console.error(e)
-				updateButtonLoading(false)
-			}
+		} catch (error) {
+			handleRefreshAccessToken(error)
 		}
 	}
 
