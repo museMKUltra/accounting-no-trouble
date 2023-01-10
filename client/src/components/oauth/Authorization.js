@@ -54,8 +54,7 @@ function Authorization({ children }) {
 				setTimeout(fetchMe)
 			},
 			error => {
-				alert(error)
-				logout()
+				console.error(error)
 			}
 		)
 
