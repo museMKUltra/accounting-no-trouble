@@ -15,6 +15,13 @@ function Authorization({ children }) {
 	const { client, accessToken, refreshToken, updateClient, resetClient } =
 		useClient()
 
+	const logout = () => {
+		resetClient()
+		setTimeout(() => {
+			navigate('/oauth/grant')
+		})
+	}
+
 	const refreshAccessToken = async () => {
 		try {
 			const { accessToken } = await fetchOauthTokenByRefreshToken(refreshToken)
@@ -25,7 +32,7 @@ function Authorization({ children }) {
 			updateClient({ accessToken })
 		} catch (error) {
 			alert(error)
-			resetClient()
+			logout()
 		}
 	}
 
@@ -48,10 +55,7 @@ function Authorization({ children }) {
 			},
 			error => {
 				alert(error)
-				resetClient()
-				setTimeout(() => {
-					navigate('/oauth/grant')
-				})
+				logout()
 			}
 		)
 
@@ -79,7 +83,7 @@ function Authorization({ children }) {
 				refreshToken,
 				user,
 				accessTokenRefresher,
-				resetClient,
+				logout,
 			}}
 		>
 			{user.isFetched ? children : 'fetching...'}
