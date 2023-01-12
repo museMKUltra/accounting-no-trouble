@@ -15,7 +15,6 @@ export function useTasks({ workspaceGid, assigneeGid, sectionGid }) {
 					{
 						'assignee.any': assignee,
 						'sections.any': section,
-						is_subtask: false,
 					}
 				)
 
