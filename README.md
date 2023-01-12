@@ -94,26 +94,34 @@ docker compose up
 docker compose down
 ```
 
-## Development with Client & Server [v1.0.0](https://github.com/museMKUltra/accounting-no-trouble/tree/v1.0.0)
+## Development with Server & Client [v1.0.0](https://github.com/museMKUltra/accounting-no-trouble/tree/v1.0.0)
 
-### React
+### Express Server
 
 ```shell
-# root of repository
+# install packages
+$ npm install
+
+# running Express
+$ node index.js
+```
+> http://localhost:3030
+
+### React Client
+
+```shell
+# root of client
 $ cd client/
+
+# install packages
+$ npm install
 
 # running React
 $ npm run start
 ```
+> http://localhost:3000
 
-### Express
-
-```shell
-# running Express in root of repository
-$ node index.js
-```
-
-### How to Publish On Heroku
+### How to Publish on Heroku
 1. Create an account on [Heroku](https://dashboard.heroku.com/) (now you should fill up the form of *Billing Information*)
 2. Install [the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 3. Login with account on terminal (you might need to create authorization in *Account settings*)
