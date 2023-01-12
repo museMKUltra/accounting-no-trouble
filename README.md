@@ -117,8 +117,10 @@ $ node index.js
 1. Create an account on [Heroku](https://dashboard.heroku.com/) (now you should fill up the form of *Billing Information*)
 2. Install [the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 3. Login with account on terminal (you might need to create authorization in *Account settings*)
-4. Use *Heroku CLI* set your environment variables
-5. Then `git push` to publish your project
+4. Set [engines](https://github.com/museMKUltra/accounting-no-trouble/blob/v1.0.0/package.json#L4-L7) in package.json for [Specifying a Node.js & an npm Version](https://devcenter.heroku.com/articles/nodejs-support#specifying-a-node-js-version)
+5. Set [scripts](https://github.com/museMKUltra/accounting-no-trouble/blob/v1.0.0/package.json#L9-L12) in package.json for [Customizing the build process](https://devcenter.heroku.com/articles/nodejs-support#customizing-the-build-process)
+6. Use *Heroku CLI* set environment variables in production
+7. Then `git push` certain branch to publish the project
 ```shell
 # rook of repository
 $ git push heroku main
@@ -126,3 +128,4 @@ $ git push heroku main
 
 #### References
 - [Deploy React and Express to Heroku](https://daveceddia.com/deploy-react-express-app-heroku/)
+- [When NPM miss with Heroku, How To Solve (npm ERR! Failed at the <module> start script).](https://dev.to/mohammedayman2018/when-npm-miss-with-heroku-how-to-solve-npm-err-failed-at-the-module-start-script-9nh)
