@@ -69,7 +69,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-## Available Docker Compose
+## Available Docker Compose [v0.0.0](https://github.com/museMKUltra/accounting-no-trouble/tree/v0.0.0)
 
 ### Copy `.env.template`
 
@@ -93,3 +93,36 @@ docker compose up
 ```shell
 docker compose down
 ```
+
+## Development with Client & Server [v1.0.0](https://github.com/museMKUltra/accounting-no-trouble/tree/v1.0.0)
+
+### React
+
+```shell
+# root of repository
+$ cd client/
+
+# running React
+$ npm run start
+```
+
+### Express
+
+```shell
+# running Express in root of repository
+$ node index.js
+```
+
+### How to Publish On Heroku
+1. Create an account on [Heroku](https://dashboard.heroku.com/) (now you should fill up the form of *Billing Information*)
+2. Install [the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+3. Login with account on terminal (you might need to create authorization in *Account settings*)
+4. Use *Heroku CLI* set your environment variables
+5. Then `git push` to publish your project
+```shell
+# rook of repository
+$ git push heroku main
+```
+
+#### References
+- [Deploy React and Express to Heroku](https://daveceddia.com/deploy-react-express-app-heroku/)
