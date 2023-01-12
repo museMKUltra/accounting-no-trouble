@@ -58,11 +58,19 @@ function BoardTasks({ tasks }) {
 		}
 	}, [])
 	useEffect(() => {
-		const buttonList = detailTasks.map(task => ({
-			taskGid: task.gid,
+		const taskGidList = detailTasks.map(task => task.gid)
+		const buttonList = taskGidList.map(taskGid => ({
+			taskGid,
 			isLoading: false,
 		}))
-		const taskList = detailTasks.map(task => {
+		const taskList = detailTasks.reduce((taskList, task) => {
+			const parentGid = task.parent?.gid || ''
+			const isSubTask = taskGidList.includes(parentGid)
+
+			if (isSubTask) {
+				return taskList
+			}
+
 			const { startOn, dueOn } = (() => {
 				const { start_on: startOn, due_on: dueOn } = task
 				if (startOn && !dueOn) {
@@ -74,15 +82,17 @@ function BoardTasks({ tasks }) {
 				return { startOn, dueOn }
 			})()
 
-			return {
+			taskList.push({
 				gid: task.gid,
 				key: task.gid,
 				name: task.name,
 				startOn,
 				dueOn,
 				customField: getCustomField(task, CUSTOM_FIELD_GID),
-			}
-		})
+				parentGid: task.parent?.gid || '',
+			})
+			return taskList
+		}, [])
 
 		setButtonList(buttonList)
 		setTaskList(taskList)
