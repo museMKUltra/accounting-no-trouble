@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 const port = process.env.PORT
 
-app.get('/oauth_authorize', (req, res) => {
+app.get('/oauth/authorize', (req, res) => {
   const url = new URL('https://app.asana.com/-/oauth_authorize')
   const searchParams = {
     response_type: 'code',
@@ -33,7 +33,7 @@ app.get('/oauth_authorize', (req, res) => {
   res.send(url.toString())
 })
 
-app.post('/oauth_token', async (req, res) => {
+app.post('/oauth/token', async (req, res) => {
   axios
     .post(
       'https://app.asana.com/-/oauth_token',
@@ -60,31 +60,7 @@ app.post('/oauth_token', async (req, res) => {
     })
 })
 
-app.post('/oauth_revoke', async (req, res) => {
-  axios
-    .post(
-      'https://app.asana.com/-/oauth_revoke',
-      {
-        client_id: process.env.OAUTH_CLIENT_ID,
-        client_secret: process.env.OAUTH_CLIENT_SECRET,
-        token: req.body.token,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      }
-    )
-    .then(function (response) {
-      console.log(response)
-      res.send(response.data)
-    })
-    .catch(function (error) {
-      res.send(error)
-    })
-})
-
-app.post('/oauth_revoke', async (req, res) => {
+app.post('/oauth/revoke', async (req, res) => {
   axios
     .post(
       'https://app.asana.com/-/oauth_revoke',
