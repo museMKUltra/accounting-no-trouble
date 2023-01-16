@@ -1,8 +1,8 @@
-const baseUrl = 'http://localhost:3030/oauth'
+const baseUrl = process.env.REACT_APP_OAUTH_URL || ''
 
 export function fetchOauthAuthorize() {
 	return new Promise((resolve, reject) => {
-		fetch(`${baseUrl}/authorize`)
+		fetch(`${baseUrl}/oauth/authorize`)
 			.then(response => response.text())
 			.then(url => resolve(url))
 			.catch(error => reject(error))
@@ -11,7 +11,7 @@ export function fetchOauthAuthorize() {
 
 function fetchOauthToken(body) {
 	return new Promise((resolve, reject) => {
-		fetch(`${baseUrl}/token`, {
+		fetch(`${baseUrl}/oauth/token`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ export function fetchOauthTokenByRefreshToken(refreshToken) {
 
 export function fetchOauthRevoke(refreshToken) {
 	return new Promise((resolve, reject) => {
-		fetch(`${baseUrl}/revoke`, {
+		fetch(`${baseUrl}/oauth/revoke`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
