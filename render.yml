@@ -3,7 +3,7 @@ services:
   - type: web
     name: ant
     env: docker
-    repo: https://github.com/museMKUltra/accounting-no-trouble
+    repo: https://github.com/museMKUltra/accounting-no-trouble.git
     region: singapore
     plan: free
     branch: main
