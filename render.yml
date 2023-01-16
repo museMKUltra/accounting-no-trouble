@@ -7,11 +7,13 @@ services:
     region: singapore
     plan: free
     branch: main
-    healthCheckPath: /
+    healthCheckPath: /healthz
     envVars:
       - key: OAUTH_CLIENT_ID
         sync: false
       - key: OAUTH_CLIENT_SECRET
         sync: false
       - key: OAUTH_REDIRECT_URI
+        sync: false
+      - key: PORT
         sync: false
