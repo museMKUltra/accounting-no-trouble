@@ -13,6 +13,9 @@ dotenv.config()
 
 const root = require('path').join(__dirname, 'client', 'build')
 
+console.log('env', app.get('env'))
+console.log('NODE_ENV', process.env.NODE_ENV)
+
 if (app.get('env') === 'development') {
   const cors = require('cors')
   app.use(cors())
