@@ -11,11 +11,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 const dotenv = require('dotenv')
 dotenv.config()
 
+const root = require('path').join(__dirname, 'client', 'build')
+
 if (app.get('env') === 'development') {
   const cors = require('cors')
   app.use(cors())
 } else {
-  app.use(express.static(path.join(__dirname, 'client/build')))
+  app.use(express.static(root))
 }
 
 app.get('/oauth/authorize', (req, res) => {
@@ -82,8 +84,12 @@ app.post('/oauth/revoke', async (req, res) => {
     })
 })
 
+app.get('/healthz', (req, res) => {
+  res.send('OK')
+})
+
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  res.sendFile('index.html', { root })
 })
 
 const port = process.env.PORT || 80
