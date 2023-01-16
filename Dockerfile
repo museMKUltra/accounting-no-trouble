@@ -4,7 +4,7 @@ WORKDIR /app
 COPY ./server/package*.json .
 RUN npm install
 COPY ./client ./client
-ENV REACT_APP_OAUTH_URL=http://localhost
+ENV REACT_APP_OAUTH_URL=https://accounting-no-trouble.onrender.com
 RUN npm run build
 COPY ./server .
 EXPOSE 80
