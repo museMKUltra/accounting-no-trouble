@@ -1,24 +1,22 @@
-const express = require('express')
 const path = require('path')
 const axios = require('axios')
-const bodyParser = require('body-parser')
 
+const express = require('express')
 const app = express()
 
-if (app.get('env') === 'development') {
-  const dotenv = require('dotenv')
-  const cors = require('cors')
+const bodyParser = require('body-parser')
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 
-  dotenv.config()
+const dotenv = require('dotenv')
+dotenv.config()
+
+if (app.get('env') === 'development') {
+  const cors = require('cors')
   app.use(cors())
 } else {
   app.use(express.static(path.join(__dirname, 'client/build')))
 }
-
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
-
-const port = process.env.PORT
 
 app.get('/oauth/authorize', (req, res) => {
   const url = new URL('https://app.asana.com/-/oauth_authorize')
@@ -88,6 +86,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
 })
 
+const port = process.env.PORT || 80
 app.listen(port, () => {
   console.log(`OAuth handler listening at http://localhost:${port}`)
 })
