@@ -1,7 +1,7 @@
 import { useReducer } from 'react'
 
 const ONE_DAY_TIME = 1000 * 60 * 60 * 24
-const ACCOUNTING_DAYS = [1, 2, 3, 5]
+const ACCOUNTING_DAYS = [1, 2, 3, 4, 5]
 
 export function formatProportion(proportion) {
 	return proportion.toFixed(2)
