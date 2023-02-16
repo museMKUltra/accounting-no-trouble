@@ -14,9 +14,19 @@ jobs:
       - name: Setup
         uses: actions/setup-node@v3
         with:
-          node-version: "14"
-      - run: npm ci
-      - run: npx semantic-release
+          node-version: "lts/*"
+      - name: Install Dependency
+        run: npm ci
+      - name: Release
+        run: >
+          npx
+          -p @semantic-release/changelog
+          -p @semantic-release/git
+          -p @semantic-release/github
+          -p @semantic-release/release-notes-generator
+          -p semantic-release-slack-bot
+          -p semantic-release
+          semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
