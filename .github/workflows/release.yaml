@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+env:
+  env_var: ${{ vars.SLACK_WEBHOOK }}
 jobs:
   release:
     name: Release
