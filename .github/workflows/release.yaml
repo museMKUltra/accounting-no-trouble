@@ -18,16 +18,11 @@ jobs:
       - name: Install Dependency
         run: npm ci
       - name: Release
-        run: >
-          npx
-          -p @semantic-release/changelog
-          -p @semantic-release/git
-          -p @semantic-release/github
-          -p @semantic-release/release-notes-generator
-          -p semantic-release-slack-bot
-          -p semantic-release
-          semantic-release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          SLACK_WEBHOOK: ${{ vars.SLACK_WEBHOOK }}
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
