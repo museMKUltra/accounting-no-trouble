@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-env:
-  env_var: ${{ vars.SLACK_WEBHOOK }}
 jobs:
   release:
     name: Release
@@ -32,3 +30,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          SLACK_WEBHOOK: ${{ vars.SLACK_WEBHOOK }}
