@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ClientContext } from '../contexts/ClientContext.js'
 import { fetchOauthRevoke } from '../hooks/oauth/oauth.js'
+import Calendar from './Calendar.js'
 
 function Home() {
 	const { refreshToken, user, logout } = useContext(ClientContext)
@@ -21,6 +22,7 @@ function Home() {
 
 	return (
 		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+			<Calendar />
 			<div>
 				<div>{isRevoking ? 'revoking...' : `hi, ${user.name}`}</div>
 				<button disabled={isRevoking} type="button" onClick={logout}>
