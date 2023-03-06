@@ -7,19 +7,31 @@ export function formatProportion(proportion) {
 	return proportion.toFixed(2)
 }
 
-function getAccountingTask(task) {
-	const { gid, startOn, dueOn } = task
+export function getDayCount({ startOn, dueOn }) {
 	const timeStartOn = new Date(startOn).getTime()
 	const timeDueOn = new Date(dueOn).getTime()
-	const dayCount = Math.round((timeDueOn - timeStartOn) / ONE_DAY_TIME) + 1
+
+	return Math.round((timeDueOn - timeStartOn) / ONE_DAY_TIME) + 1
+}
+
+export function getDateStringList({ startOn, dayCount }) {
+	return Array.from(Array(dayCount).keys(), index => {
+		const date = new Date(startOn)
+		date.setDate(date.getDate() + index)
+
+		return date.toLocaleDateString()
+	})
+}
+
+function getAccountingTask(task) {
+	const { gid, startOn, dueOn } = task
+	const dayCount = getDayCount({ startOn, dueOn })
 
 	return {
 		gid,
-		dates: Array.from(Array(dayCount).keys(), index => {
-			const date = new Date(startOn)
-			date.setDate(date.getDate() + index)
-			return date.toISOString().slice(0, 10)
-		}).filter(date => ACCOUNTING_DAYS.includes(new Date(date).getDay())),
+		dates: getDateStringList({ startOn, dayCount }).filter(date =>
+			ACCOUNTING_DAYS.includes(new Date(date).getDay())
+		),
 	}
 }
 
