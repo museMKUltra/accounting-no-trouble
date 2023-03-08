@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import BoardSection from './BoardSection.js'
-import CalendarEventTrigger from './CalendarEventTrigger.js'
+import OooTrigger from './OooTrigger.js'
 import { useSections } from '../hooks/asana/useSections.js'
 import { useDateline } from '../reducers/useDateline.js'
 import {
@@ -84,7 +84,7 @@ function Board() {
 									disabledDates.length ? disabledDates.join(', ') : '--'
 								}`}</p>
 							</div>
-							<CalendarEventTrigger setDisabledDates={setDisabledDates} />
+							<OooTrigger setDisabledDates={setDisabledDates} />
 						</div>
 					</div>
 					{user.isFetching || isSectionsFetching ? (

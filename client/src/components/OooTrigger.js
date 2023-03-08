@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useOutOfOfficeDates } from '../hooks/google/useOutOfOfficeDates.js'
 
-function CalendarEventTrigger({ setDisabledDates }) {
+function OooTrigger({ setDisabledDates }) {
 	const { isReady, hasAuth, outOfOfficeDates, handleToggle, handleSignIn } =
 		useOutOfOfficeDates({
 			timeMin: new Date().toISOString(),
@@ -15,7 +15,7 @@ function CalendarEventTrigger({ setDisabledDates }) {
 	return (
 		<>
 			<button disabled={!isReady} onClick={handleToggle}>
-				{hasAuth ? 'sign out' : 'sign in'}
+				{hasAuth ? 'unlink OOO' : 'link OOO'}
 			</button>
 			{hasAuth && (
 				<button disabled={!isReady} onClick={handleSignIn}>
@@ -26,4 +26,4 @@ function CalendarEventTrigger({ setDisabledDates }) {
 	)
 }
 
-export default CalendarEventTrigger
+export default OooTrigger
