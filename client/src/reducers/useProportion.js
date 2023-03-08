@@ -2,6 +2,21 @@ import { useEffect, useReducer, useState } from 'react'
 
 const ONE_DAY_TIME = 1000 * 60 * 60 * 24
 const ACCOUNTING_DAYS = [1, 2, 3, 4, 5]
+const WEEKDAY_MAP = [
+	'Sunday',
+	'Monday',
+	'Tuesday',
+	'Wednesday',
+	'Thursday',
+	'Friday',
+	'Saturday',
+]
+
+export function getDisabledWeekdays() {
+	return Array.from(Array(7).keys(), index => index)
+		.filter(index => !ACCOUNTING_DAYS.includes(index))
+		.map(day => WEEKDAY_MAP[day])
+}
 
 export function formatProportion(proportion) {
 	return proportion.toFixed(2)
