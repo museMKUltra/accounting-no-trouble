@@ -1,4 +1,4 @@
-import { useReducer } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 
 const ONE_DAY_TIME = 1000 * 60 * 60 * 24
 const ACCOUNTING_DAYS = [1, 2, 3, 4, 5]
@@ -23,15 +23,29 @@ export function getDateStringList({ startOn, dayCount }) {
 	})
 }
 
-function getAccountingTask(task) {
+function getFilteredDates(dates, disabledDates) {
+	return dates
+		.filter(date => ACCOUNTING_DAYS.includes(new Date(date).getDay()))
+		.filter(date => !disabledDates.includes(date))
+}
+
+function getAccountingTask(task, disabledDates) {
 	const { gid, startOn, dueOn } = task
 	const dayCount = getDayCount({ startOn, dueOn })
+	const dateStringList = getDateStringList({ startOn, dayCount })
 
 	return {
 		gid,
-		dates: getDateStringList({ startOn, dayCount }).filter(date =>
-			ACCOUNTING_DAYS.includes(new Date(date).getDay())
-		),
+		dates: getFilteredDates(dateStringList, disabledDates),
+	}
+}
+
+function updateAccountingTask(task, disabledDates) {
+	const { gid, dates } = task
+
+	return {
+		gid,
+		dates: getFilteredDates(dates, disabledDates),
 	}
 }
 
@@ -59,10 +73,17 @@ function updatedProportionTasks(accountingTasks) {
 const reducer = (state, action) => {
 	switch (action.type) {
 		case 'add':
-			return updatedProportionTasks([...state, getAccountingTask(action.task)])
+			return updatedProportionTasks([
+				...state,
+				getAccountingTask(action.task, action.disabledDates),
+			])
 		case 'remove':
 			return updatedProportionTasks(
 				state.filter(task => task.gid !== action.taskGid)
+			)
+		case 'update':
+			return updatedProportionTasks(
+				state.map(task => updateAccountingTask(task, action.disabledDates))
 			)
 		default:
 			return state
@@ -71,10 +92,18 @@ const reducer = (state, action) => {
 
 export function useProportion() {
 	const [state, dispatch] = useReducer(reducer, [], state => state)
+	const [disabledDates, setDisabledDates] = useState([])
+
+	useEffect(() => {
+		dispatch({ type: 'update', disabledDates })
+	}, [disabledDates])
 
 	return {
+		disabledDates,
+		setDisabledDates,
 		accountingTasks: state,
-		appendAccountingTask: task => dispatch({ type: 'add', task }),
+		appendAccountingTask: task =>
+			dispatch({ type: 'add', task, disabledDates }),
 		deleteAccountingTask: taskGid => dispatch({ type: 'remove', taskGid }),
 	}
 }
