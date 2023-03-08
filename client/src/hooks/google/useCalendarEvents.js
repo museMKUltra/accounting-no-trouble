@@ -3,6 +3,7 @@ import { useGapi } from './useGapi.js'
 import { useGsi } from './useGsi.js'
 
 export function useCalendarEvents({ options, config }) {
+	const optionsRef = useRef(options)
 	const gapiClientRef = useRef(null)
 	const gsiClientRef = useRef(null)
 	const gsiOauthRef = useRef(null)
@@ -68,7 +69,7 @@ export function useCalendarEvents({ options, config }) {
 		try {
 			// eslint-disable-next-line no-undef
 			const response = await gapiClientRef.current?.calendar.events.list(
-				options
+				optionsRef.current
 			)
 
 			return response?.result?.items || []
@@ -106,11 +107,19 @@ export function useCalendarEvents({ options, config }) {
 		setHasAuth(false)
 	}
 
+	function updateOptions(options) {
+		optionsRef.current = {
+			...optionsRef.current,
+			...options,
+		}
+	}
+
 	return {
 		isReady,
 		hasAuth,
 		calendarEvents,
 		handleSignIn,
 		handleSignOut,
+		updateOptions,
 	}
 }

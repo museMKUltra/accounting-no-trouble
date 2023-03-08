@@ -84,7 +84,11 @@ function Board() {
 									disabledDates.length ? disabledDates.join(', ') : '--'
 								}`}</p>
 							</div>
-							<OooTrigger setDisabledDates={setDisabledDates} />
+							<OooTrigger
+								setDisabledDates={setDisabledDates}
+								startOn={dateline.startOn}
+								dueOn={dateline.dueOn}
+							/>
 						</div>
 					</div>
 					{user.isFetching || isSectionsFetching ? (

@@ -2,29 +2,35 @@ import { useCalendarEvents } from './useCalendarEvents.js'
 import { useEffect, useState } from 'react'
 import { getDateStringList, getDayCount } from '../../reducers/useProportion.js'
 
-export function useOutOfOfficeDates({ timeMin, timeMax }) {
+export function useOutOfOfficeDates() {
 	const [outOfOfficeDates, setOutOfOfficeDates] = useState([])
-	const { isReady, hasAuth, calendarEvents, handleSignIn, handleSignOut } =
-		useCalendarEvents({
-			config: {
-				clientId:
-					'199718595657-6kmaama316jr9oqc4kvkouqbecmukpp3.apps.googleusercontent.com',
-				apiKey: 'AIzaSyD-bCFUjp1iY-pzYIqX5t38rpQpv98na4U',
-				scope: 'https://www.googleapis.com/auth/calendar.readonly',
-				discoveryDocs: [
-					'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-				],
-			},
-			options: {
-				calendarId: 'primary',
-				timeMin,
-				timeMax,
-				showDeleted: false,
-				singleEvents: true,
-				orderBy: 'startTime',
-				q: 'Out of office',
-			},
-		})
+	const {
+		isReady,
+		hasAuth,
+		calendarEvents,
+		handleSignIn,
+		handleSignOut,
+		updateOptions,
+	} = useCalendarEvents({
+		config: {
+			clientId:
+				'199718595657-6kmaama316jr9oqc4kvkouqbecmukpp3.apps.googleusercontent.com',
+			apiKey: 'AIzaSyD-bCFUjp1iY-pzYIqX5t38rpQpv98na4U',
+			scope: 'https://www.googleapis.com/auth/calendar.readonly',
+			discoveryDocs: [
+				'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+			],
+		},
+		options: {
+			calendarId: 'primary',
+			timeMin: '',
+			timeMax: '',
+			showDeleted: false,
+			singleEvents: true,
+			orderBy: 'startTime',
+			q: 'Out of office',
+		},
+	})
 
 	function isWholePoint(dateTime) {
 		const date = new Date(dateTime)
@@ -60,6 +66,10 @@ export function useOutOfOfficeDates({ timeMin, timeMax }) {
 		}
 	}
 
+	function updateTimeLimit({ timeMin, timeMax }) {
+		updateOptions({ timeMin, timeMax })
+	}
+
 	return {
 		isReady,
 		hasAuth,
@@ -67,5 +77,6 @@ export function useOutOfOfficeDates({ timeMin, timeMax }) {
 		handleToggle,
 		handleSignIn,
 		handleSignOut,
+		updateTimeLimit,
 	}
 }

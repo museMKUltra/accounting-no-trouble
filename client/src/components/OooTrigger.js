@@ -1,16 +1,26 @@
 import React, { useEffect } from 'react'
 import { useOutOfOfficeDates } from '../hooks/google/useOutOfOfficeDates.js'
 
-function OooTrigger({ setDisabledDates }) {
-	const { isReady, hasAuth, outOfOfficeDates, handleToggle, handleSignIn } =
-		useOutOfOfficeDates({
-			timeMin: new Date().toISOString(),
-			timeMax: new Date(2023, 2, 31, 23, 59, 59).toISOString(),
-		})
+function OooTrigger({ setDisabledDates, startOn, dueOn }) {
+	const {
+		isReady,
+		hasAuth,
+		outOfOfficeDates,
+		handleToggle,
+		handleSignIn,
+		updateTimeLimit,
+	} = useOutOfOfficeDates()
 
 	useEffect(() => {
 		setDisabledDates(outOfOfficeDates)
 	}, [outOfOfficeDates])
+
+	useEffect(() => {
+		updateTimeLimit({
+			timeMin: startOn ? new Date(startOn).toISOString() : '',
+			timeMax: dueOn ? new Date(dueOn).toISOString() : '',
+		})
+	}, [startOn, dueOn])
 
 	return (
 		<>
