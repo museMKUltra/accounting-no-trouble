@@ -51,16 +51,18 @@ function getAccountingTask(task, disabledDates) {
 
 	return {
 		gid,
+		dateStringList,
 		dates: getFilteredDates(dateStringList, disabledDates),
 	}
 }
 
 function updateAccountingTask(task, disabledDates) {
-	const { gid, dates } = task
+	const { gid, dateStringList } = task
 
 	return {
 		gid,
-		dates: getFilteredDates(dates, disabledDates),
+		dateStringList,
+		dates: getFilteredDates(dateStringList, disabledDates),
 	}
 }
 
