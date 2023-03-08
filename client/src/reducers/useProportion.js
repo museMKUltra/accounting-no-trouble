@@ -110,6 +110,7 @@ export function useProportion() {
 	const [disabledDates, setDisabledDates] = useState([])
 
 	useEffect(() => {
+		console.log('update')
 		dispatch({ type: 'update', disabledDates })
 	}, [disabledDates])
 

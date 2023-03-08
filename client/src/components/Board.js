@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import BoardSection from './BoardSection.js'
+import CalendarEventTrigger from './CalendarEventTrigger.js'
 import { useSections } from '../hooks/asana/useSections.js'
 import { useDateline } from '../reducers/useDateline.js'
 import {
@@ -28,8 +29,13 @@ function Board() {
 
 	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
 
-	const { accountingTasks, appendAccountingTask, deleteAccountingTask } =
-		useProportion()
+	const {
+		accountingTasks,
+		disabledDates,
+		setDisabledDates,
+		appendAccountingTask,
+		deleteAccountingTask,
+	} = useProportion()
 
 	return (
 		<GidContext.Provider
@@ -72,9 +78,13 @@ function Board() {
 									Home
 								</NavLink>
 							</nav>
-							<div>
+							<div style={{ maxWidth: '400px' }}>
 								<p>{`disabled days: ${getDisabledWeekdays().join(', ')}`}</p>
+								<p>{`disabled dates: ${
+									disabledDates.length ? disabledDates.join(', ') : '--'
+								}`}</p>
 							</div>
+							<CalendarEventTrigger setDisabledDates={setDisabledDates} />
 						</div>
 					</div>
 					{user.isFetching || isSectionsFetching ? (
