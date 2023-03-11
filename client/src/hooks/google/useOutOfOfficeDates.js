@@ -13,9 +13,8 @@ export function useOutOfOfficeDates() {
 		updateOptions,
 	} = useCalendarEvents({
 		config: {
-			clientId:
-				'199718595657-6kmaama316jr9oqc4kvkouqbecmukpp3.apps.googleusercontent.com',
-			apiKey: 'AIzaSyD-bCFUjp1iY-pzYIqX5t38rpQpv98na4U',
+			clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+			apiKey: process.env.REACT_APP_GOOGLE_API_KEY,
 			scope: 'https://www.googleapis.com/auth/calendar.readonly',
 			discoveryDocs: [
 				'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
