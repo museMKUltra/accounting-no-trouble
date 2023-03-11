@@ -11,7 +11,10 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "npm run server & npm run client",
+    "server": "PORT=3030 node index.js",
+    "client": "cd client && npm run start",
+    "production": "node index.js",
     "build": "cd client && npm install && npm run build",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
