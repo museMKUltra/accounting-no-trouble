@@ -1,8 +1,12 @@
 import React, { useContext } from 'react'
 import BoardSection from './BoardSection.js'
+import OooTrigger from './OooTrigger.js'
 import { useSections } from '../hooks/asana/useSections.js'
 import { useDateline } from '../reducers/useDateline.js'
-import { useProportion } from '../reducers/useProportion.js'
+import {
+	getDisabledWeekdays,
+	useProportion,
+} from '../reducers/useProportion.js'
 import { GidContext } from '../contexts/GidContext.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
@@ -25,8 +29,13 @@ function Board() {
 
 	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
 
-	const { accountingTasks, appendAccountingTask, deleteAccountingTask } =
-		useProportion()
+	const {
+		accountingTasks,
+		disabledDates,
+		setDisabledDates,
+		appendAccountingTask,
+		deleteAccountingTask,
+	} = useProportion()
 
 	return (
 		<GidContext.Provider
@@ -58,16 +67,29 @@ function Board() {
 						}}
 					>
 						<h1>Board</h1>
-						<nav>
-							<NavLink
-								to="/"
-								style={({ isActive }) => ({
-									color: isActive ? 'grey' : 'inherit',
-								})}
-							>
-								Home
-							</NavLink>
-						</nav>
+						<div>
+							<nav style={{ textAlign: 'right' }}>
+								<NavLink
+									to="/"
+									style={({ isActive }) => ({
+										color: isActive ? 'grey' : 'inherit',
+									})}
+								>
+									Home
+								</NavLink>
+							</nav>
+							<div style={{ maxWidth: '400px' }}>
+								<p>{`disabled days: ${getDisabledWeekdays().join(', ')}`}</p>
+								<p>{`disabled dates: ${
+									disabledDates.length ? disabledDates.join(', ') : '--'
+								}`}</p>
+							</div>
+							<OooTrigger
+								setDisabledDates={setDisabledDates}
+								startOn={dateline.startOn}
+								dueOn={dateline.dueOn}
+							/>
+						</div>
 					</div>
 					{user.isFetching || isSectionsFetching ? (
 						<p>fetching...</p>

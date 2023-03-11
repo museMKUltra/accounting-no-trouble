@@ -98,13 +98,18 @@ function BoardTasks({ tasks }) {
 		setTaskList(taskList)
 	}, [detailTasks])
 
+	const [suggestiveProportionMap, setSuggestiveProportionMap] = useState({})
 	const { checkedCheckboxes, checkCheckbox, uncheckCheckbox } = useCheckbox()
 	const { accountingTasks, appendAccountingTask, deleteAccountingTask } =
 		useContext(ProportionContext)
-	const getSuggestiveProportion = useCallback(
-		taskId => accountingTasks.find(task => task.gid === taskId)?.proportion,
-		[accountingTasks]
-	)
+	useEffect(() => {
+		setSuggestiveProportionMap(
+			accountingTasks.reduce((proportionMap, task) => {
+				proportionMap[task.gid] = task.proportion
+				return proportionMap
+			}, {})
+		)
+	}, [accountingTasks])
 
 	const handleCheckboxCheck = taskGid => {
 		const task = taskList.find(task => task.gid === taskGid)
@@ -132,7 +137,7 @@ function BoardTasks({ tasks }) {
 	)
 
 	const submitSuggestiveProportion = async task => {
-		const { gid: taskGid, name: taskName } = task
+		const { gid: taskGid, name: taskName, suggestiveProportion } = task
 		const updateButtonLoading = isLoading => {
 			setButtonList(buttonList =>
 				buttonList.map(button => ({
@@ -162,11 +167,10 @@ function BoardTasks({ tasks }) {
 
 		try {
 			updateButtonLoading(true)
-			const suggestiveProportion = getSuggestiveProportion(taskGid)
 			const responseTask = await updateAsanaTaskCustomField({
 				taskGid,
 				customFieldGid: CUSTOM_FIELD_GID,
-				customFieldValue: suggestiveProportion,
+				customFieldValue: suggestiveProportionMap[taskGid],
 			})
 			alert(`update "${taskName}" to "${suggestiveProportion}" successfully`)
 
@@ -219,7 +223,7 @@ function BoardTasks({ tasks }) {
 							}
 						})()
 
-						const suggestiveProportion = getSuggestiveProportion(task.gid)
+						const suggestiveProportion = suggestiveProportionMap[task.gid]
 						const isSuggestiveDisabled =
 							task.customField.displayValue === suggestiveProportion
 						const isButtonLoading =
