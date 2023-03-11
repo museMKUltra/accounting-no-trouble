@@ -5,7 +5,6 @@ COPY package*.json .
 RUN npm install
 COPY .env .
 COPY ./client ./client
-ENV REACT_APP_OAUTH_URL=https://accounting-no-trouble.onrender.com
 RUN npm run build
 COPY . .
 EXPOSE 80
