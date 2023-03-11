@@ -137,3 +137,27 @@ $ git push heroku main
 #### References
 - [Deploy React and Express to Heroku](https://daveceddia.com/deploy-react-express-app-heroku/)
 - [When NPM miss with Heroku, How To Solve (npm ERR! Failed at the <module> start script).](https://dev.to/mohammedayman2018/when-npm-miss-with-heroku-how-to-solve-npm-err-failed-at-the-module-start-script-9nh)
+
+## Deploy [v1.2.0](https://github.com/museMKUltra/accounting-no-trouble/tree/v1.2.0) on [Render](https://render.com/)
+
+### Method 1. - UI Configuration
+1. Create a *Web Service* to connect repository on *Render*.
+2. Fill up relative settings in *Docker* environment.
+3. Set *Environment Variables* on target service.
+4. Go to following *Process*.
+
+### Method 2. - [Blueprint Specification](https://render.com/docs/blueprint-spec)
+1. Create `render.yaml` for *Web Service* setting in repository.
+2. Create a new *Web Service* to connect repository on *Render*.
+3. Set *Environment Variables* on target service.
+3. Go to following *Process*.
+
+### Docker Process
+- Folder `/client` for front end client.
+- Folder `/` for back end server.
+- Dockerfile implementing for building web service.
+  1. copy `package*.json` to root directory
+  2. install packages for server in root
+  3. copy `/client` to `/client` directory
+  4. set environment for front end（optional）
+  5. `npm run build` to build client files for server service
