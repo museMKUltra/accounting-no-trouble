@@ -15,6 +15,7 @@
     "server": "PORT=3030 node index.js",
     "client": "cd client && npm run start",
     "production": "node index.js",
+    "test-production": "NODE_ENV=production node index.js",
     "build": "cd client && npm install && npm run build",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
