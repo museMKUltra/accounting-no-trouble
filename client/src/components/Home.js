@@ -42,6 +42,15 @@ function Home() {
 				>
 					ＷEB
 				</NavLink>
+				<NavLink
+					to="/issue"
+					style={({ isActive }) => ({
+						color: isActive ? 'grey' : 'white',
+					})}
+					className='button'
+				>
+					工單區
+				</NavLink>
 			</div>
 			
 		</div>
