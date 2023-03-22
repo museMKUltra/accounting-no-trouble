@@ -13,12 +13,13 @@ import { ProportionContext } from '../contexts/ProportionContext.js'
 import { NavLink } from 'react-router-dom'
 import {
 	WORKSPACE_GID as workspaceGid,
-	PROJECT_GID as projectGid,
+	PROJECT_GID_LIST as projectIdList,
 	CUSTOM_FIELD_GID as customFieldGid,
 } from '../configs/constent.js'
 import { ClientContext } from '../contexts/ClientContext.js'
 
 function Board() {
+	const projectGid = projectIdList.WEB
 	const { user } = useContext(ClientContext)
 	const { isFetching: isSectionsFetching, sections } = useSections({
 		projectGid,
