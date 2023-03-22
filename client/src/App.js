@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import Board from './components/Board.js'
 import Demo from './components/Demo.js'
 import Home from './components/Home.js'
+import Issue from './components/Issue.js'
 import Oauth from './components/oauth/Oauth.js'
 import Authorization from './components/oauth/Authorization.js'
 
@@ -23,6 +24,14 @@ function App() {
 					element={
 						<Authorization>
 							<Board />
+						</Authorization>
+					}
+				/>
+				<Route
+					path="/issue"
+					element={
+						<Authorization>
+							<Issue />
 						</Authorization>
 					}
 				/>
