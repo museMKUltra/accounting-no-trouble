@@ -37,3 +37,15 @@
     transform: rotate(360deg);
   }
 }
+
+/*component*/
+.button {
+  display: block;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  background-color: cadetblue;
+  border-radius: 10px;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+}

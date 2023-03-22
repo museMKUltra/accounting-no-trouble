@@ -1,3 +1,4 @@
+import './Home.css'
 import React, { useContext, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ClientContext } from '../contexts/ClientContext.js'
@@ -20,8 +21,8 @@ function Home() {
 	}
 
 	return (
-		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-			<div>
+		<div>
+			<div className='block_member'>
 				<div>{isRevoking ? 'revoking...' : `hi, ${user.name}`}</div>
 				<button disabled={isRevoking} type="button" onClick={logout}>
 					logout
@@ -30,14 +31,19 @@ function Home() {
 					revoke
 				</button>
 			</div>
-			<NavLink
-				to="/board"
-				style={({ isActive }) => ({
-					color: isActive ? 'grey' : 'inherit',
-				})}
-			>
-				Board
-			</NavLink>
+			<hr/>
+			<div className='block_nav'>
+				<NavLink
+					to="/board"
+					style={({ isActive }) => ({
+						color: isActive ? 'grey' : 'white',
+					})}
+					className='button'
+				>
+					ＷEB
+				</NavLink>
+			</div>
+			
 		</div>
 	)
 }
