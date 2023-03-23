@@ -4,10 +4,10 @@ import BoardTasks from './BoardTasks.js'
 import { GidContext } from '../contexts/GidContext.js'
 
 function BoardSection({ section }) {
-	const { workspaceGid, assigneeGid } = useContext(GidContext)
-
+	const { workspaceGid, projectGid, assigneeGid } = useContext(GidContext)
 	const { isFetching, tasks } = useTasks({
 		workspaceGid,
+		projectGid,
 		assigneeGid,
 		sectionGid: section.gid,
 	})
