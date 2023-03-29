@@ -12,7 +12,7 @@ function BoardSection({ section }) {
 		sectionGid: section.gid,
 	})
 	const hasTasks = tasks.length > 0
-
+	const viewType = 'enableAll'
 	return (
 		<>
 			{isFetching ? (
@@ -40,7 +40,7 @@ function BoardSection({ section }) {
 								{section.name}
 							</h2>
 							<div style={{ flex: '1' }}>
-								<BoardTasks tasks={tasks} />
+								<BoardTasks tasks={tasks} viewType={viewType}/>
 							</div>
 						</div>
 					</>

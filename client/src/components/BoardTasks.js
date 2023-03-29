@@ -26,7 +26,7 @@ import { CUSTOM_FIELD_GID } from '../configs/constent.js'
 const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
 
-function BoardTasks({ tasks }) {
+function BoardTasks({ tasks, viewType = 'disableByCondition' }) {
 	const [buttonList, setButtonList] = useState([])
 
 	const [taskList, setTaskList] = useState([])
@@ -198,7 +198,7 @@ function BoardTasks({ tasks }) {
 				<div style={{ display: 'grid', gap: '12px' }}>
 					{taskList.map(task => {
 						const checked = checkedCheckboxes.includes(task.key)
-						const disabled = !(task.startOn && task.dueOn)
+						const disabled = !(task.startOn && task.dueOn) && !(viewType === 'enableAll')
 						const displayDueDate = `${task.startOn} ~ ${task.dueOn}`
 
 						const { paddingLeft, paddingRight } = (() => {
@@ -229,7 +229,6 @@ function BoardTasks({ tasks }) {
 						const isButtonLoading =
 							buttonList.find(button => button.taskGid === task.gid)
 								.isLoading || false
-
 						return (
 							<div
 								key={task.key}
