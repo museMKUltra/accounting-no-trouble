@@ -34,29 +34,31 @@ function Issue() {
 	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
 	const { accountingTasks, appendAccountingTask, deleteAccountingTask } = useProportion()
 
-	return <>
-		{isTasksFetching ? (
-			<p>fetching...</p>
-		) : (
-			<DatelineContext.Provider
-				value={{
-					dateline,
-					proposeStartOn,
-					proposeDueOn,
-				}}
-			>
-				<ProportionContext.Provider
+	return (
+		<>
+			{isTasksFetching ? (
+				<p>fetching...</p>
+			) : (
+				<DatelineContext.Provider
 					value={{
-						accountingTasks,
-						appendAccountingTask,
-						deleteAccountingTask,
+						dateline,
+						proposeStartOn,
+						proposeDueOn,
 					}}
 				>
-					<BoardTasks tasks={tasks} />
-				</ProportionContext.Provider>
-			</DatelineContext.Provider>
-		)}
-</>
+					<ProportionContext.Provider
+						value={{
+							accountingTasks,
+							appendAccountingTask,
+							deleteAccountingTask,
+						}}
+					>
+						<BoardTasks tasks={tasks} />
+					</ProportionContext.Provider>
+				</DatelineContext.Provider>
+			)}
+		</>
+	)
 }
 
 export default Issue
