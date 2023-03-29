@@ -1,42 +1,43 @@
-import React, { useContext } from 'react'
-import BoardSection from './BoardSection.js'
-import { useSections } from '../hooks/asana/useSections.js'
-import { useDateline } from '../reducers/useDateline.js'
+import React, { useEffect } from 'react'
+import BoardTasks from './BoardTasks'
 import {
 	WORKSPACE_GID as workspaceGid,
 	PROJECT_GID_LIST as projectIdList,
 } from '../configs/constent.js'
-import { ClientContext } from '../contexts/ClientContext.js'
-import { GidContext } from '../contexts/GidContext.js'
+import { useTasksWithPayload } from '../hooks/asana/useTasksWithPayload'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
-import {
-	useProportion,
-} from '../reducers/useProportion.js'
+import { useDateline } from '../reducers/useDateline.js'
+import { useProportion } from '../reducers/useProportion.js'
+
+const issueProjectGid = projectIdList.ISSUE
+const issueSectionGid = '1201191083505009'
 
 function Issue() {
-	const projectGid = projectIdList.ISSUE
-	const issueSectionGid = '1201191083505009'
-	const { user } = useContext(ClientContext)
-	const { isFetching: isSectionsFetching, sections } = useSections({
-		projectGid,
-	})
-	const issueSection = sections.find(section =>
-		section.gid === issueSectionGid
-	)
-	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
 	const {
-		accountingTasks,
-		appendAccountingTask,
-		deleteAccountingTask,
-	} = useProportion()
+		isFetching: isTasksFetching,
+		tasks,
+		fetchTasks,
+	} = useTasksWithPayload()
 
-	return (
-		<GidContext.Provider
-			value={{
-				workspaceGid,
-				projectGid,
-			}}>
+	useEffect(() => {
+		async function fetchIssueTasks() {
+			await fetchTasks(workspaceGid, {
+				'projects.any': issueProjectGid,
+				'sections.any': issueSectionGid,
+			})
+		}
+
+		fetchIssueTasks()
+	}, [])
+
+	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
+	const { accountingTasks, appendAccountingTask, deleteAccountingTask } = useProportion()
+
+	return <>
+		{isTasksFetching ? (
+			<p>fetching...</p>
+		) : (
 			<DatelineContext.Provider
 				value={{
 					dateline,
@@ -51,16 +52,11 @@ function Issue() {
 						deleteAccountingTask,
 					}}
 				>
-					{user.isFetching || isSectionsFetching ? (
-						<p>fetching...</p>
-					) : (
-						<BoardSection key={issueSection.key} section={issueSection}/>
-					)}
+					<BoardTasks tasks={tasks} />
 				</ProportionContext.Provider>
 			</DatelineContext.Provider>
-		</GidContext.Provider>
-		
-	)
+		)}
+</>
 }
 
 export default Issue
