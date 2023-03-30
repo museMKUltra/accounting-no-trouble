@@ -7,12 +7,11 @@ export function useTasksWithPayload() {
 	const { client } = useContext(ClientContext)
 
 	const fetchTasks = useCallback(
-		async (workspace, payload) => {
+		async (sectionGid) => {
 			try {
 				setIsFetching(true)
-				const { data: tasks = [] } = await client.tasks.searchTasksForWorkspace(
-					workspace,
-					payload
+				const { data: tasks = [] } = await client.tasks.getTasksForSection(
+					sectionGid
 				)
 
 				setTasks(tasks)

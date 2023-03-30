@@ -1,16 +1,11 @@
 import React, { useEffect } from 'react'
 import BoardTasks from './BoardTasks'
-import {
-	WORKSPACE_GID as workspaceGid,
-	PROJECT_GID_LIST as projectIdList,
-} from '../configs/constent.js'
 import { useTasksWithPayload } from '../hooks/asana/useTasksWithPayload'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 import { useDateline } from '../reducers/useDateline.js'
 import { useProportion } from '../reducers/useProportion.js'
 
-const issueProjectGid = projectIdList.ISSUE
 const issueSectionGid = '1201191083505009'
 
 function Issue() {
@@ -22,10 +17,7 @@ function Issue() {
 
 	useEffect(() => {
 		async function fetchIssueTasks() {
-			await fetchTasks(workspaceGid, {
-				'projects.any': issueProjectGid,
-				'sections.any': issueSectionGid,
-			})
+			await fetchTasks(issueSectionGid)
 		}
 
 		fetchIssueTasks()
@@ -33,6 +25,10 @@ function Issue() {
 
 	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
 	const { accountingTasks, appendAccountingTask, deleteAccountingTask } = useProportion()
+
+	const getAllChooseTask = () => {
+		console.log(accountingTasks)
+	}
 
 	return (
 		<>
@@ -53,7 +49,13 @@ function Issue() {
 							deleteAccountingTask,
 						}}
 					>
-						<BoardTasks tasks={tasks} />
+						<button
+							className='button'
+							onClick={getAllChooseTask}
+						>
+							取得所選取的Tasks
+						</button>
+						<BoardTasks tasks={tasks} viewType='enableAll'/>
 					</ProportionContext.Provider>
 				</DatelineContext.Provider>
 			)}
