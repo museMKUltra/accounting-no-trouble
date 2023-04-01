@@ -161,3 +161,34 @@ $ git push heroku main
   3. copy `/client` to `/client` directory
   4. set environment for front end（optional）
   5. `npm run build` to build client files for server service
+
+## How to Start Project Locally
+
+### Install Packages
+
+```shell
+# go to folder client
+$ cd client
+# install packages for React App
+$ npm install
+# go back to root
+$ cd ..
+# install packages for Express App
+$ npm install
+```
+
+### Start Server & Client
+
+```shell
+# run server in port 3030 & client in port 3000
+$ npm run start
+```
+
+or you can execute independently
+
+```shell
+# run server in port 3030
+$ npm run server
+# run client in port 3000
+$ npm run client
+```
