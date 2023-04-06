@@ -1,11 +1,17 @@
 import React, { useContext } from 'react'
 import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
 import { GidContext } from '../contexts/GidContext.js'
+// import { useTasksWithPayload } from '../hooks/asana/useTasksWithPayload'
 
 function Task() {
 	const { taskGids, customFieldGids } = useContext(GidContext)
 
 	const { isFetching, detailTasks } = useDetailTasks({ taskGids })
+
+	// const {
+	// 	createSubtask,
+	// } = useTasksWithPayload()
+
 	const taskList = detailTasks.map(task =>
 		Object.assign(
 			{},
@@ -15,7 +21,11 @@ function Task() {
 				startOn: task.start_on,
 				dueOn: task.due_on,
 				customFields: task.custom_fields
-					.filter(customField => customFieldGids.includes(customField.gid))
+					.filter(customField => {
+						if(customFieldGids) {
+							customFieldGids.includes(customField.gid)
+						}
+					})
 					.map(customField =>
 						Object.assign(
 							{},
@@ -30,6 +40,11 @@ function Task() {
 		)
 	)
 
+	const genSubTasks = (task) => {
+		console.log(task)
+		// createSubtask(task.gid)
+	}
+
 	return (
 		<>
 			<h1>Tasks</h1>
@@ -40,14 +55,22 @@ function Task() {
 					{taskList.map(task => (
 						<div key={task.key}>
 							<h2>{task.name}</h2>
-							<ul>
-								<li>{`Due Date : ${task.startOn} ~ ${task.dueOn}`}</li>
-								{task.customFields.map(customField => (
-									<li key={customField.key}>
-										{`${customField.name} : ${customField.displayValue}`}
-									</li>
-								))}
-							</ul>
+							{ customFieldGids ? (
+								<ul>
+									<li key='due'>{`Due Date : ${task.startOn} ~ ${task.dueOn}`}</li>
+									{task.customFields.map(customField => (
+										<li key={customField.key}>
+											{`${customField.name} : ${customField.displayValue}`}
+										</li>
+									))}
+								</ul>
+							) : (
+								<button
+									onClick={()=> {genSubTasks(task)}}
+								>
+									產生標準subtask
+								</button>
+							)}
 						</div>
 					))}
 				</>
