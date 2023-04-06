@@ -10,14 +10,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 const dotenv = require('dotenv')
 dotenv.config()
 
-const root = require('path').join(__dirname, 'client', 'build')
+const nodEnv = process.env.NODE_ENV || 'development'
+const port = process.env.PORT || 80
 
-if (process.env.NODE_ENV === 'development') {
-  const cors = require('cors')
-  app.use(cors())
-} else {
-  app.use(express.static(root))
-}
+const isDevEnv = nodEnv === 'development'
+const root = (() => {
+  const directory = isDevEnv ? 'public' : 'build'
+  return require('path').join(__dirname, 'client', directory)
+})()
+app.use(express.static(root))
 
 app.get('/oauth/authorize', (req, res) => {
   const url = new URL('https://app.asana.com/-/oauth_authorize')
@@ -91,7 +92,8 @@ app.get('*', (req, res) => {
   res.sendFile('index.html', { root })
 })
 
-const port = process.env.PORT || 80
 app.listen(port, () => {
+  console.log('NODE_ENV', nodEnv)
+  console.log('PORT', port)
   console.log(`OAuth handler listening at http://localhost:${port}`)
 })
