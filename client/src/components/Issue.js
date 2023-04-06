@@ -6,6 +6,7 @@ import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 import { useDateline } from '../reducers/useDateline.js'
 import { useProportion } from '../reducers/useProportion.js'
+import { CUSTOM_FIELD_GIDS_ISSUE_BOARD as customFieldGids} from '../configs/constent.js'
 
 const issueSectionGid = '1201191083505009'
 
@@ -23,15 +24,8 @@ function Issue() {
 		}
 		fetchIssueTasks()
 	}, [])
-
 	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
 	const { accountingTasks, appendAccountingTask, deleteAccountingTask } = useProportion()
-	const customFieldGids = [
-		'1202680372473546',
-		'1200384734831601',
-		'1204245619861384',
-	]
-	console.log(customFieldGids)
 	const getAllChooseTask = () => {
 		accountingTasks.forEach(task => {
 			createSubtask(task.gid)
@@ -60,6 +54,7 @@ function Issue() {
 						<GidContext.Provider
 							value={{
 								taskGids,
+								customFieldGids,
 							}}
 						>
 							<button

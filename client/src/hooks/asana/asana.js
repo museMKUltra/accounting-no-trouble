@@ -54,10 +54,10 @@ export async function fetchTasksFromSection(sectionGid) {
 	return { tasks }
 }
 
-export async function createSubtask(taskGid, customFieldSettings = {}) {
+export async function createSubtask(taskGid, custom_fields) {
 	const { data: result = {} } = await client.tasks.createSubtaskForTask(
 		taskGid,
-		customFieldSettings
+		custom_fields,
 	)
 	return { result }
 }
