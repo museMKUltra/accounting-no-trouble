@@ -30,11 +30,12 @@ export function useTasksWithPayload() {
 	)
 
 	const createSubtask = useCallback(
-		async (taskGid) => {
+		async (taskGid, custom_fields = {}) => {
 			try {
 				setIsFetching(true)
 				const { data: result = {} } = await client.tasks.createSubtaskForTask(
-					taskGid
+					taskGid,
+					custom_fields
 				)
 				console.log(result)
 			} catch(e) {
