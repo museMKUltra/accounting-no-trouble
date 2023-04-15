@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Task from './Task'
+import IssueTask from './IssueTask.js'
 import { GidContext } from '../contexts/GidContext.js'
 import { useTasksWithPayload } from '../hooks/asana/useTasksWithPayload'
 import { DatelineContext } from '../contexts/DatelineContext.js'
@@ -62,7 +62,7 @@ function Issue() {
 							<button className="button" onClick={getAllChooseTask}>
 								取得所選取的Tasks
 							</button>
-							<Task />
+							<IssueTask />
 						</GidContext.Provider>
 					</ProportionContext.Provider>
 				</DatelineContext.Provider>
