@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from 'react'
 import { ClientContext } from '../../../contexts/ClientContext.js'
-import { tasksForSectionGetter } from '../apis.js'
+import { tasksForSectionGetter, subtaskForTaskCreator } from '../apis.js'
 
 export function useTasks() {
 	const [response, setResponse] = useState(null)
@@ -37,9 +37,20 @@ export function useTasks() {
 		[client]
 	)
 
+	const createSubtaskForTask = useCallback(
+		async (taskGid, payload = {}) => {
+			const createSubtaskForTask = subtaskForTaskCreator(client)
+			const fetcher = new Fetcher(createSubtaskForTask)
+
+			await fetcher.fetch(taskGid, payload)
+		},
+		[client]
+	)
+
 	return {
 		isFetching,
 		response,
 		getTasksForSection,
+		createSubtaskForTask,
 	}
 }
