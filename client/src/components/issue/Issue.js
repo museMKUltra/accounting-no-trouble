@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import IssueTask from './IssueTask.js'
 import { GidContext } from '../../contexts/GidContext.js'
 import { useTasksWithPayload } from '../../hooks/asana/useTasksWithPayload.js'
+import { useGetTasksForSection } from '../../hooks/asana/tasks/useGetTasksForSection.js'
 import { DatelineContext } from '../../contexts/DatelineContext.js'
 import { ProportionContext } from '../../contexts/ProportionContext.js'
 import { useDateline } from '../../reducers/useDateline.js'
@@ -15,13 +16,13 @@ function Issue() {
 	const {
 		isFetching: isTasksFetching,
 		taskGids,
-		fetchTasks,
-		createSubtask,
-	} = useTasksWithPayload()
+		getTasksForSection,
+	} = useGetTasksForSection()
+	const { createSubtask } = useTasksWithPayload()
 
 	useEffect(() => {
 		async function fetchIssueTasks() {
-			await fetchTasks(SECTION.BACKLOG.GID)
+			await getTasksForSection(SECTION.BACKLOG.GID)
 		}
 		fetchIssueTasks()
 	}, [])

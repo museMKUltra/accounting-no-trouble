@@ -1,5 +1,6 @@
-import { useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { ClientContext } from '../../../contexts/ClientContext.js'
+import { tasksForSectionGetter } from '../apis.js'
 
 export function useTasks() {
 	const [response, setResponse] = useState(null)
@@ -26,8 +27,19 @@ export function useTasks() {
 		}
 	}
 
+	const getTasksForSection = useCallback(
+		async (sectionGid, payload = {}) => {
+			const getTasksForSection = tasksForSectionGetter(client)
+			const fetcher = new Fetcher(getTasksForSection)
+
+			await fetcher.fetch(sectionGid, payload)
+		},
+		[client]
+	)
+
 	return {
 		isFetching,
 		response,
+		getTasksForSection,
 	}
 }
