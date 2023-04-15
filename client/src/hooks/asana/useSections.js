@@ -5,6 +5,7 @@ export function useSections({ projectGid }) {
 	const [sections, setSections] = useState([])
 	const [isFetching, setIsFetching] = useState(false)
 	const { client, accessTokenRefresher } = useContext(ClientContext)
+
 	const fetchSections = useCallback(
 		async project => {
 			const handleRefreshAccessToken = accessTokenRefresher(
@@ -23,7 +24,7 @@ export function useSections({ projectGid }) {
 				setIsFetching(true)
 				const { data: sections = [] } =
 					await client.sections.getSectionsForProject(project, {})
-					setSections(sections)
+				setSections(sections)
 			} catch (e) {
 				await handleRefreshAccessToken(e)
 			} finally {
@@ -32,6 +33,7 @@ export function useSections({ projectGid }) {
 		},
 		[client]
 	)
+
 	useEffect(() => {
 		if (!projectGid) return
 
