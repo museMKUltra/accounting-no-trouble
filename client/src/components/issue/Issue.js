@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react'
 import IssueTask from './IssueTask.js'
 import { GidContext } from '../../contexts/GidContext.js'
-import { useGetTasksForSection } from '../../hooks/asana/tasks/useGetTasksForSection.js'
-import { useCreateSubtaskForTask } from '../../hooks/asana/tasks/useCreateSubtaskForTask.js'
+import {
+	useGetTasksForSection,
+	useCreateSubtaskForTask,
+} from '../../hooks/asana/tasks'
 import { DatelineContext } from '../../contexts/DatelineContext.js'
 import { ProportionContext } from '../../contexts/ProportionContext.js'
 import { useDateline } from '../../reducers/useDateline.js'
