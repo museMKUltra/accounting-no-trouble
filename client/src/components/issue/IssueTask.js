@@ -1,14 +1,14 @@
 import React, { useContext } from 'react'
 import { useDetailTasks } from '../../hooks/asana/useDetailTasks.js'
 import { GidContext } from '../../contexts/GidContext.js'
-import { useTasksWithPayload } from '../../hooks/asana/useTasksWithPayload.js'
+import { useCreateSubtaskForTask } from '../../hooks/asana/tasks'
 
 function IssueTask() {
 	const { taskGids, customFieldGids } = useContext(GidContext)
 
 	const { isFetching, detailTasks } = useDetailTasks({ taskGids })
 
-	const { createSubtask } = useTasksWithPayload()
+	const { createSubtaskForTask } = useCreateSubtaskForTask()
 
 	const genSubTasks = task => {
 		const customFieldPayload = {}
@@ -38,7 +38,7 @@ function IssueTask() {
 					specificFieldDetail.multi_enum_values[index].gid,
 				],
 			})
-			createSubtask(task.gid, {
+			createSubtaskForTask(task.gid, {
 				name: subtaskName,
 				custom_fields: customFieldPayload,
 			})
