@@ -6,9 +6,7 @@ import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 import { useDateline } from '../reducers/useDateline.js'
 import { useProportion } from '../reducers/useProportion.js'
-import { CUSTOM_FIELD_GIDS_ISSUE_BOARD as customFieldGids} from '../configs/constent.js'
-
-const issueSectionGid = '1201191083505009'
+import { SECTION, CUSTOM_FIELD } from '../configs/constent.js'
 
 function Issue() {
 	const {
@@ -20,12 +18,13 @@ function Issue() {
 
 	useEffect(() => {
 		async function fetchIssueTasks() {
-			await fetchTasks(issueSectionGid)
+			await fetchTasks(SECTION.BACKLOG.GID)
 		}
 		fetchIssueTasks()
 	}, [])
 	const { dateline, proposeStartOn, proposeDueOn } = useDateline()
-	const { accountingTasks, appendAccountingTask, deleteAccountingTask } = useProportion()
+	const { accountingTasks, appendAccountingTask, deleteAccountingTask } =
+		useProportion()
 	const getAllChooseTask = () => {
 		accountingTasks.forEach(task => {
 			createSubtask(task.gid)
@@ -54,16 +53,17 @@ function Issue() {
 						<GidContext.Provider
 							value={{
 								taskGids,
-								customFieldGids,
+								customFieldGids: [
+									CUSTOM_FIELD.TASK.GID,
+									CUSTOM_FIELD.PLATFORM.GID,
+									CUSTOM_FIELD.LEVEL.GID,
+								],
 							}}
 						>
-							<button
-								className='button'
-								onClick={getAllChooseTask}
-							>
+							<button className="button" onClick={getAllChooseTask}>
 								取得所選取的Tasks
 							</button>
-							<Task/>
+							<Task />
 						</GidContext.Provider>
 					</ProportionContext.Provider>
 				</DatelineContext.Provider>
