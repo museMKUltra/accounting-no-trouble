@@ -1,31 +1,21 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { ClientContext } from '../../contexts/ClientContext.js'
 
-export function useTasks({ workspaceGid, projectGid, sectionGid, assigneeGid }) {
+export function useTasks({ workspaceGid, assigneeGid, sectionGid }) {
 	const [tasks, setTasks] = useState([])
 	const [isFetching, setIsFetching] = useState(false)
 	const { client } = useContext(ClientContext)
 
 	const fetchTasks = useCallback(
-		async (workspace, projectGid, assignee, section) => {
+		async (workspace, assignee, section) => {
 			try {
 				setIsFetching(true)
-				let condition = {}
-				if(!assignee) {
-					condition = {
-						'projects.any': projectGid,
-						'sections.any': section,
-					}
-				} else {
-					condition = {
+				const { data: tasks = [] } = await client.tasks.searchTasksForWorkspace(
+					workspace,
+					{
 						'assignee.any': assignee,
 						'sections.any': section,
 					}
-				}
-
-				const { data: tasks = [] } = await client.tasks.searchTasksForWorkspace(
-					workspace,
-					condition
 				)
 
 				setTasks(tasks)
@@ -39,10 +29,10 @@ export function useTasks({ workspaceGid, projectGid, sectionGid, assigneeGid }) 
 	)
 
 	useEffect(() => {
-		if (!workspaceGid || !sectionGid) return
+		if (!workspaceGid || !assigneeGid || !sectionGid) return
 
-		fetchTasks(workspaceGid, projectGid, assigneeGid, sectionGid)
-	}, [workspaceGid, projectGid, assigneeGid, sectionGid])
+		fetchTasks(workspaceGid, assigneeGid, sectionGid)
+	}, [workspaceGid, assigneeGid, sectionGid])
 
 	return { isFetching, tasks }
 }
