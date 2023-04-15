@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import IssueTask from './IssueTask.js'
 import { GidContext } from '../../contexts/GidContext.js'
-import { useTasksWithPayload } from '../../hooks/asana/useTasksWithPayload.js'
 import { useGetTasksForSection } from '../../hooks/asana/tasks/useGetTasksForSection.js'
+import { useCreateSubtaskForTask } from '../../hooks/asana/tasks/useCreateSubtaskForTask.js'
 import { DatelineContext } from '../../contexts/DatelineContext.js'
 import { ProportionContext } from '../../contexts/ProportionContext.js'
 import { useDateline } from '../../reducers/useDateline.js'
@@ -18,7 +18,7 @@ function Issue() {
 		taskGids,
 		getTasksForSection,
 	} = useGetTasksForSection()
-	const { createSubtask } = useTasksWithPayload()
+	const { createSubtaskForTask } = useCreateSubtaskForTask()
 
 	useEffect(() => {
 		async function fetchIssueTasks() {
@@ -31,7 +31,7 @@ function Issue() {
 		useProportion()
 	const getAllChooseTask = () => {
 		accountingTasks.forEach(task => {
-			createSubtask(task.gid)
+			createSubtaskForTask(task.gid)
 		})
 	}
 
