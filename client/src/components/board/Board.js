@@ -1,19 +1,19 @@
 import React, { useContext } from 'react'
 import BoardSection from './BoardSection.js'
-import OooTrigger from './OooTrigger.js'
-import { useSections } from '../hooks/asana/useSections.js'
-import { useDateline } from '../reducers/useDateline.js'
+import OooTrigger from '../OooTrigger.js'
+import { useSections } from '../../hooks/asana/useSections.js'
+import { useDateline } from '../../reducers/useDateline.js'
 import {
 	getDisabledWeekdays,
 	useProportion,
-} from '../reducers/useProportion.js'
-import { GidContext } from '../contexts/GidContext.js'
-import { DatelineContext } from '../contexts/DatelineContext.js'
-import { ProportionContext } from '../contexts/ProportionContext.js'
+} from '../../reducers/useProportion.js'
+import { GidContext } from '../../contexts/GidContext.js'
+import { DatelineContext } from '../../contexts/DatelineContext.js'
+import { ProportionContext } from '../../contexts/ProportionContext.js'
 import { NavLink } from 'react-router-dom'
-import { WORKSPACE, PROJECT } from '../configs/constent.js'
-import { getCustomFieldGids } from '../helpers/gids.js'
-import { ClientContext } from '../contexts/ClientContext.js'
+import { WORKSPACE, PROJECT } from '../../configs/constent.js'
+import { getCustomFieldGids } from '../../helpers/gids.js'
+import { ClientContext } from '../../contexts/ClientContext.js'
 
 const workspaceGid = WORKSPACE.KKDAY.GID
 const projectGid = PROJECT.WEB.GID

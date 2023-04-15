@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
 import IssueTask from './IssueTask.js'
-import { GidContext } from '../contexts/GidContext.js'
-import { useTasksWithPayload } from '../hooks/asana/useTasksWithPayload'
-import { DatelineContext } from '../contexts/DatelineContext.js'
-import { ProportionContext } from '../contexts/ProportionContext.js'
-import { useDateline } from '../reducers/useDateline.js'
-import { useProportion } from '../reducers/useProportion.js'
-import { PROJECT, SECTION } from '../configs/constent.js'
-import { getCustomFieldGids } from '../helpers/gids.js'
+import { GidContext } from '../../contexts/GidContext.js'
+import { useTasksWithPayload } from '../../hooks/asana/useTasksWithPayload.js'
+import { DatelineContext } from '../../contexts/DatelineContext.js'
+import { ProportionContext } from '../../contexts/ProportionContext.js'
+import { useDateline } from '../../reducers/useDateline.js'
+import { useProportion } from '../../reducers/useProportion.js'
+import { PROJECT, SECTION } from '../../configs/constent.js'
+import { getCustomFieldGids } from '../../helpers/gids.js'
 
 const customFieldGids = getCustomFieldGids(PROJECT.ISSUE.GID)
 

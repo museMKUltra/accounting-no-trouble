@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
-import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
-import { GidContext } from '../contexts/GidContext.js'
+import { useDetailTasks } from '../../hooks/asana/useDetailTasks.js'
+import { GidContext } from '../../contexts/GidContext.js'
 
 function Task() {
 	const { taskGids, customFieldGids } = useContext(GidContext)

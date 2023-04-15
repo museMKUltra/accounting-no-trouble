@@ -6,22 +6,22 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import Button from './Button.js'
-import Checkbox from './Checkbox.js'
-import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
-import { useCheckbox } from '../reducers/useCheckbox.js'
+import Button from '../Button.js'
+import Checkbox from '../Checkbox.js'
+import { useDetailTasks } from '../../hooks/asana/useDetailTasks.js'
+import { useCheckbox } from '../../reducers/useCheckbox.js'
 import {
 	dealDueOnDateline,
 	dealStartOnDateline,
 	defaultDateline,
 	getTimeDueOn,
 	getTimeStartOn,
-} from '../reducers/useDateline.js'
-import { formatProportion } from '../reducers/useProportion.js'
-import { DatelineContext } from '../contexts/DatelineContext.js'
-import { ProportionContext } from '../contexts/ProportionContext.js'
-import { ClientContext } from '../contexts/ClientContext.js'
-import { CUSTOM_FIELD } from '../configs/constent.js'
+} from '../../reducers/useDateline.js'
+import { formatProportion } from '../../reducers/useProportion.js'
+import { DatelineContext } from '../../contexts/DatelineContext.js'
+import { ProportionContext } from '../../contexts/ProportionContext.js'
+import { ClientContext } from '../../contexts/ClientContext.js'
+import { CUSTOM_FIELD } from '../../configs/constent.js'
 
 const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
