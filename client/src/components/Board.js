@@ -11,11 +11,15 @@ import { GidContext } from '../contexts/GidContext.js'
 import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 import { NavLink } from 'react-router-dom'
-import { WORKSPACE, PROJECT, CUSTOM_FIELD } from '../configs/constent.js'
+import { WORKSPACE, PROJECT } from '../configs/constent.js'
+import { getCustomFieldGids } from '../helpers/gids.js'
 import { ClientContext } from '../contexts/ClientContext.js'
 
+const workspaceGid = WORKSPACE.KKDAY.GID
+const projectGid = PROJECT.WEB.GID
+const customFieldGids = getCustomFieldGids(projectGid)
+
 function Board() {
-	const projectGid = PROJECT.WEB.GID
 	const { user } = useContext(ClientContext)
 	const { isFetching: isSectionsFetching, sections } = useSections({
 		projectGid,
@@ -37,9 +41,9 @@ function Board() {
 	return (
 		<GidContext.Provider
 			value={{
-				workspaceGid: WORKSPACE.KKDAY.GID,
+				workspaceGid,
 				projectGid,
-				customFieldGids: [CUSTOM_FIELD.ESTIMATION.GID],
+				customFieldGids,
 				assigneeGid: user.gid,
 			}}
 		>

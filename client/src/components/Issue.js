@@ -6,7 +6,10 @@ import { DatelineContext } from '../contexts/DatelineContext.js'
 import { ProportionContext } from '../contexts/ProportionContext.js'
 import { useDateline } from '../reducers/useDateline.js'
 import { useProportion } from '../reducers/useProportion.js'
-import { SECTION, CUSTOM_FIELD } from '../configs/constent.js'
+import { PROJECT, SECTION } from '../configs/constent.js'
+import { getCustomFieldGids } from '../helpers/gids.js'
+
+const customFieldGids = getCustomFieldGids(PROJECT.ISSUE.GID)
 
 function Issue() {
 	const {
@@ -53,11 +56,7 @@ function Issue() {
 						<GidContext.Provider
 							value={{
 								taskGids,
-								customFieldGids: [
-									CUSTOM_FIELD.TASK.GID,
-									CUSTOM_FIELD.PLATFORM.GID,
-									CUSTOM_FIELD.LEVEL.GID,
-								],
+								customFieldGids,
 							}}
 						>
 							<button className="button" onClick={getAllChooseTask}>
