@@ -6,27 +6,27 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import Button from './Button.js'
-import Checkbox from './Checkbox.js'
-import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
-import { useCheckbox } from '../reducers/useCheckbox.js'
+import Button from '../Button.js'
+import Checkbox from '../Checkbox.js'
+import { useDetailTasks } from '../../hooks/asana/useDetailTasks.js'
+import { useCheckbox } from '../../reducers/useCheckbox.js'
 import {
 	dealDueOnDateline,
 	dealStartOnDateline,
 	defaultDateline,
 	getTimeDueOn,
 	getTimeStartOn,
-} from '../reducers/useDateline.js'
-import { formatProportion } from '../reducers/useProportion.js'
-import { DatelineContext } from '../contexts/DatelineContext.js'
-import { ProportionContext } from '../contexts/ProportionContext.js'
-import { ClientContext } from '../contexts/ClientContext.js'
-import { CUSTOM_FIELD_GID } from '../configs/constent.js'
+} from '../../reducers/useDateline.js'
+import { formatProportion } from '../../reducers/useProportion.js'
+import { DatelineContext } from '../../contexts/DatelineContext.js'
+import { ProportionContext } from '../../contexts/ProportionContext.js'
+import { ClientContext } from '../../contexts/ClientContext.js'
+import { CUSTOM_FIELD } from '../../configs/constent.js'
 
 const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
 
-function BoardTasks({ tasks, viewType = 'disableByCondition' }) {
+function BoardTasks({ tasks }) {
 	const [buttonList, setButtonList] = useState([])
 
 	const [taskList, setTaskList] = useState([])
@@ -88,7 +88,7 @@ function BoardTasks({ tasks, viewType = 'disableByCondition' }) {
 				name: task.name,
 				startOn,
 				dueOn,
-				customField: getCustomField(task, CUSTOM_FIELD_GID),
+				customField: getCustomField(task, CUSTOM_FIELD.ESTIMATION.GID),
 				parentGid: task.parent?.gid || '',
 			})
 			return taskList
@@ -169,7 +169,7 @@ function BoardTasks({ tasks, viewType = 'disableByCondition' }) {
 			updateButtonLoading(true)
 			const responseTask = await updateAsanaTaskCustomField({
 				taskGid,
-				customFieldGid: CUSTOM_FIELD_GID,
+				customFieldGid: CUSTOM_FIELD.ESTIMATION.GID,
 				customFieldValue: suggestiveProportionMap[taskGid],
 			})
 			alert(`update "${taskName}" to "${suggestiveProportion}" successfully`)
@@ -178,7 +178,10 @@ function BoardTasks({ tasks, viewType = 'disableByCondition' }) {
 				taskList.map(task => {
 					if (task.gid === taskGid) {
 						return Object.assign(task, {
-							customField: getCustomField(responseTask, CUSTOM_FIELD_GID),
+							customField: getCustomField(
+								responseTask,
+								CUSTOM_FIELD.ESTIMATION.GID
+							),
 						})
 					}
 					return task
@@ -198,7 +201,7 @@ function BoardTasks({ tasks, viewType = 'disableByCondition' }) {
 				<div style={{ display: 'grid', gap: '12px' }}>
 					{taskList.map(task => {
 						const checked = checkedCheckboxes.includes(task.key)
-						const disabled = !(task.startOn && task.dueOn) && !(viewType === 'enableAll')
+						const disabled = !(task.startOn && task.dueOn)
 						const displayDueDate = `${task.startOn} ~ ${task.dueOn}`
 
 						const { paddingLeft, paddingRight } = (() => {
@@ -229,6 +232,7 @@ function BoardTasks({ tasks, viewType = 'disableByCondition' }) {
 						const isButtonLoading =
 							buttonList.find(button => button.taskGid === task.gid)
 								.isLoading || false
+
 						return (
 							<div
 								key={task.key}

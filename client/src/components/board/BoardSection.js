@@ -1,18 +1,18 @@
 import React, { useContext } from 'react'
-import { useTasks } from '../hooks/asana/useTasks.js'
+import { useTasks } from '../../hooks/asana/useTasks.js'
 import BoardTasks from './BoardTasks.js'
-import { GidContext } from '../contexts/GidContext.js'
+import { GidContext } from '../../contexts/GidContext.js'
 
 function BoardSection({ section }) {
-	const { workspaceGid, projectGid, assigneeGid } = useContext(GidContext)
+	const { workspaceGid, assigneeGid } = useContext(GidContext)
+
 	const { isFetching, tasks } = useTasks({
 		workspaceGid,
-		projectGid,
 		assigneeGid,
 		sectionGid: section.gid,
 	})
 	const hasTasks = tasks.length > 0
-	const viewType = 'enableAll'
+
 	return (
 		<>
 			{isFetching ? (
@@ -40,7 +40,7 @@ function BoardSection({ section }) {
 								{section.name}
 							</h2>
 							<div style={{ flex: '1' }}>
-								<BoardTasks tasks={tasks} viewType={viewType}/>
+								<BoardTasks tasks={tasks} />
 							</div>
 						</div>
 					</>

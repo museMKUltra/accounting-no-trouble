@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
-import Button from './Button.js'
+import Button from '../Button.js'
 import SectionTask from './SectionTask.js'
-import { useSections } from '../hooks/asana/useSections.js'
-import { useCheckbox } from '../reducers/useCheckbox.js'
-import { GidContext } from '../contexts/GidContext.js'
+import { useSections } from '../../hooks/asana/useSections.js'
+import { useCheckbox } from '../../reducers/useCheckbox.js'
+import { GidContext } from '../../contexts/GidContext.js'
 
 function Section({ updateTaskGids }) {
 	const { workspaceGid, assigneeGid, projectGid } = useContext(GidContext)

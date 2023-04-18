@@ -46,22 +46,6 @@ export async function fetchTasks(workspaceGid, assigneeGid, sectionGid) {
 	return { tasks }
 }
 
-export async function fetchTasksFromSection(sectionGid) {
-	const { data: tasks = [] } = await client.tasks.getTasksForSection(
-		sectionGid
-	)
-
-	return { tasks }
-}
-
-export async function createSubtask(taskGid, custom_fields) {
-	const { data: result = {} } = await client.tasks.createSubtaskForTask(
-		taskGid,
-		custom_fields,
-	)
-	return { result }
-}
-
 export async function updateAsanaTaskCustomField({
 	taskGid,
 	customFieldGid,
