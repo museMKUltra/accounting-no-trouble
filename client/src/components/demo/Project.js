@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
-import RadioList from './RadioList.js'
-import Button from './Button.js'
-import { useProjects } from '../hooks/asana/useProjects.js'
+import RadioList from '../RadioList.js'
+import Button from '../Button.js'
+import { useProjects } from '../../hooks/asana/useProjects.js'
 import ProjectCustomField from './ProjectCustomField.js'
-import { useCheckbox } from '../reducers/useCheckbox.js'
-import { useRadio } from '../reducers/useRadio.js'
-import { GidContext } from '../contexts/GidContext.js'
+import { useCheckbox } from '../../reducers/useCheckbox.js'
+import { useRadio } from '../../reducers/useRadio.js'
+import { GidContext } from '../../contexts/GidContext.js'
 
 function Project({ updateProjectGid }) {
 	const { workspaceGid } = useContext(GidContext)

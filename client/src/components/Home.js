@@ -20,8 +20,8 @@ function Home() {
 	}
 
 	return (
-		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-			<div>
+		<div>
+			<div style={{ margin: '20px' }}>
 				<div>{isRevoking ? 'revoking...' : `hi, ${user.name}`}</div>
 				<button disabled={isRevoking} type="button" onClick={logout}>
 					logout
@@ -30,14 +30,27 @@ function Home() {
 					revoke
 				</button>
 			</div>
-			<NavLink
-				to="/board"
-				style={({ isActive }) => ({
-					color: isActive ? 'grey' : 'inherit',
-				})}
-			>
-				Board
-			</NavLink>
+			<hr />
+			<div style={{ width: '10%', margin: '20px' }}>
+				<NavLink
+					to="/board"
+					style={({ isActive }) => ({
+						color: isActive ? 'grey' : 'white',
+					})}
+					className="button"
+				>
+					ＷEB
+				</NavLink>
+				<NavLink
+					to="/issue"
+					style={({ isActive }) => ({
+						color: isActive ? 'grey' : 'white',
+					})}
+					className="button"
+				>
+					工單區
+				</NavLink>
+			</div>
 		</div>
 	)
 }

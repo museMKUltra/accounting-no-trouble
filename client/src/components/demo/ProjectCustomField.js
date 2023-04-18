@@ -1,6 +1,6 @@
 import React from 'react'
-import { useCustomFields } from '../hooks/asana/useCustomFields.js'
-import CheckboxList from './CheckboxList.js'
+import { useCustomFields } from '../../hooks/asana/useCustomFields.js'
+import CheckboxList from '../CheckboxList.js'
 
 function ProjectCustomField({
 	projectGid,
