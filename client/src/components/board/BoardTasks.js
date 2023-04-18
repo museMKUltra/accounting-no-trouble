@@ -6,22 +6,22 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import Button from './Button.js'
-import Checkbox from './Checkbox.js'
-import { useDetailTasks } from '../hooks/asana/useDetailTasks.js'
-import { useCheckbox } from '../reducers/useCheckbox.js'
+import Button from '../Button.js'
+import Checkbox from '../Checkbox.js'
+import { useDetailTasks } from '../../hooks/asana/useDetailTasks.js'
+import { useCheckbox } from '../../reducers/useCheckbox.js'
 import {
 	dealDueOnDateline,
 	dealStartOnDateline,
 	defaultDateline,
 	getTimeDueOn,
 	getTimeStartOn,
-} from '../reducers/useDateline.js'
-import { formatProportion } from '../reducers/useProportion.js'
-import { DatelineContext } from '../contexts/DatelineContext.js'
-import { ProportionContext } from '../contexts/ProportionContext.js'
-import { ClientContext } from '../contexts/ClientContext.js'
-import { CUSTOM_FIELD_GID } from '../configs/constent.js'
+} from '../../reducers/useDateline.js'
+import { formatProportion } from '../../reducers/useProportion.js'
+import { DatelineContext } from '../../contexts/DatelineContext.js'
+import { ProportionContext } from '../../contexts/ProportionContext.js'
+import { ClientContext } from '../../contexts/ClientContext.js'
+import { CUSTOM_FIELD } from '../../configs/constent.js'
 
 const percentageFormatter = total => number =>
 	`${Math.trunc((number / total) * 100)}%`
@@ -88,7 +88,7 @@ function BoardTasks({ tasks }) {
 				name: task.name,
 				startOn,
 				dueOn,
-				customField: getCustomField(task, CUSTOM_FIELD_GID),
+				customField: getCustomField(task, CUSTOM_FIELD.ESTIMATION.GID),
 				parentGid: task.parent?.gid || '',
 			})
 			return taskList
@@ -170,7 +170,7 @@ function BoardTasks({ tasks }) {
 			updateButtonLoading(true)
 			const responseTask = await updateAsanaTaskCustomField({
 				taskGid,
-				customFieldGid: CUSTOM_FIELD_GID,
+				customFieldGid: CUSTOM_FIELD.ESTIMATION.GID,
 				customFieldValue: suggestiveProportion,
 			})
 			alert(`update "${taskName}" to "${suggestiveProportion}" successfully`)
@@ -179,7 +179,10 @@ function BoardTasks({ tasks }) {
 				taskList.map(task => {
 					if (task.gid === taskGid) {
 						return Object.assign(task, {
-							customField: getCustomField(responseTask, CUSTOM_FIELD_GID),
+							customField: getCustomField(
+								responseTask,
+								CUSTOM_FIELD.ESTIMATION.GID
+							),
 						})
 					}
 					return task

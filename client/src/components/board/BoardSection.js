@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
-import { useTasks } from '../hooks/asana/useTasks.js'
+import { useTasks } from '../../hooks/asana/useTasks.js'
 import BoardTasks from './BoardTasks.js'
-import { GidContext } from '../contexts/GidContext.js'
+import { GidContext } from '../../contexts/GidContext.js'
 
 function BoardSection({ section }) {
 	const { workspaceGid, assigneeGid } = useContext(GidContext)
