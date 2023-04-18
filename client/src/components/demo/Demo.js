@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom'
-import { GidContext } from '../contexts/GidContext.js'
+import { GidContext } from '../../contexts/GidContext.js'
 import Workspace from './Workspace.js'
 import Project from './Project.js'
 import Section from './Section.js'
