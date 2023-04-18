@@ -137,7 +137,8 @@ function BoardTasks({ tasks }) {
 	)
 
 	const submitSuggestiveProportion = async task => {
-		const { gid: taskGid, name: taskName, suggestiveProportion } = task
+		const { gid: taskGid, name: taskName } = task
+		const suggestiveProportion = suggestiveProportionMap[taskGid]
 		const updateButtonLoading = isLoading => {
 			setButtonList(buttonList =>
 				buttonList.map(button => ({
@@ -170,7 +171,7 @@ function BoardTasks({ tasks }) {
 			const responseTask = await updateAsanaTaskCustomField({
 				taskGid,
 				customFieldGid: CUSTOM_FIELD_GID,
-				customFieldValue: suggestiveProportionMap[taskGid],
+				customFieldValue: suggestiveProportion,
 			})
 			alert(`update "${taskName}" to "${suggestiveProportion}" successfully`)
 
